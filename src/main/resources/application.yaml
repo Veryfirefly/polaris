@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: polaris-tenant
+  cache:
+    type: redis
+  data:
+    redis:
+      client-name: ${spring.application.name}-redis-client
+      client-type: lettuce
+      host: localhost
+      port: 6379
+      password: 123456
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: xiaoyu
+    url: jdbc:mysql://127.0.0.1:3307/polaris?useUnicode=true&characterEncoding=utf8
+polaris:
+  security:
+    token-salt: N/A(Please Configure)
+    token-expire-duration: P7D
+    logout-url: /api/auth/logout
+    permit-urls:
+      - /api/auth/login
+      - ${polaris.security.logout-url}
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  type-aliases-package: com.xsdq.polaris.repository.dao
+  configuration:
+    map-underscore-to-camel-case: on
+  mapper-locations: classpath:/mapper/**.xml

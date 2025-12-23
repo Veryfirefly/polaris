@@ -2,19 +2,27 @@ package com.xsdq.polaris.repository.po;
 
 import java.time.LocalDateTime;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.xsdq.polaris.repository.Status;
+
+@TableName("users")
 public class UserPO {
 
+    @TableId
     private Long id;
     private String account;
     private String password;
-    private String name;
-    private Short status;
+    private String nickname;
+    private Status status;
     private String email;
     private String phone;
     private String address;
     private String avatarPath;
     private Long tenantId;
+    private Long createBy;
     private LocalDateTime createTime;
+    private Long updateBy;
     private LocalDateTime updateTime;
 
     public Long getId() {
@@ -41,19 +49,19 @@ public class UserPO {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public Short getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -97,12 +105,28 @@ public class UserPO {
         this.tenantId = tenantId;
     }
 
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
     }
 
     public LocalDateTime getUpdateTime() {

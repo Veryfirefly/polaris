@@ -1,5 +1,6 @@
 package com.xsdq.polaris.repository.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.xsdq.polaris.repository.Status;
@@ -9,13 +10,14 @@ import java.time.LocalDateTime;
 @TableName("tenants")
 public class TenantPO {
 
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private String name;
-    private String identity;
+    private String description;
     private Status status;
     private String logoPath;
     private String address;
+    private String contactInfo;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -35,22 +37,13 @@ public class TenantPO {
         this.name = name;
     }
 
-    public String getIdentity() {
-        return identity;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setDescription(String description) {
+        this.description = description;
     }
-
-//    public Short getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(Short status) {
-//        this.status = status;
-//    }
-
 
     public Status getStatus() {
         return status;
@@ -74,6 +67,14 @@ public class TenantPO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
     public LocalDateTime getCreateTime() {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xsdq.polaris.repository.dao.RoleDao">
+
+    <resultMap id="RoleMapping" type="com.xsdq.polaris.repository.po.RolePO">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARBINARY" />
+        <result column="entity" property="entity" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARBINARY" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+</mapper>
