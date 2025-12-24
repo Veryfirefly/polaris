@@ -21,5 +21,8 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
+	<select id="findByAccount" resultMap="UserMapping">
+
+    </select>
 
 </mapper>

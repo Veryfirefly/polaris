@@ -46,4 +46,8 @@ public class PolarisSecurityProperties {
     public void setLogoutUrl(String logoutUrl) {
         this.logoutUrl = logoutUrl;
     }
+
+    public String[] toPermitUrls() {
+        return getPermitUrls().toArray(new String[0]);
+    }
 }

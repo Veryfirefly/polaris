@@ -1,0 +1,44 @@
+name: Polaris CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+      branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: polaris_test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          java-package: jdk
+          distribution: 'oracle'
+          cache: maven
+      - name: Wait for MySQL
+        run: |
+          until mysql -h 127.0.0.1 -P 3306 -u test -ptest polaris_test -e "select 1"; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+      - name: Run tests
+        run: mvn test

@@ -7,6 +7,8 @@ import com.xsdq.polaris.security.PolarisAccessDeniedHandler;
 import com.xsdq.polaris.security.PolarisAuthenticationEntryPoint;
 import com.xsdq.polaris.security.PolarisLogoutSuccessHandler;
 import com.xsdq.polaris.security.PolarisUserDetailsService;
+import com.xsdq.polaris.security.autoconfigure.PolarisSecurityProperties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -65,18 +67,19 @@ public class SpringSecurityConfig {
             JwtTokenAuthenticationFilter authenticationFilter,
             LogoutSuccessHandler logoutSuccessHandler,
             AuthenticationEntryPoint authenticationEntryPoint,
-            AccessDeniedHandler accessDeniedHandler) throws Exception {
+            AccessDeniedHandler accessDeniedHandler,
+            PolarisSecurityProperties props) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
+                .authorizeHttpRequests(registry ->
+                        registry.requestMatchers(props.toPermitUrls()).permitAll()
                                 .anyRequest().authenticated())
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+                .exceptionHandling(configurer ->
+                        configurer.authenticationEntryPoint(authenticationEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler))
-                .logout(logoutCustomizer ->
-                        logoutCustomizer.logoutUrl("/api/auth/logout").logoutSuccessHandler(logoutSuccessHandler)
+                .logout(configurer ->
+                        configurer.logoutUrl(props.getLogoutUrl()).logoutSuccessHandler(logoutSuccessHandler)
                                 .clearAuthentication(false))
                 .addFilterBefore(authenticationFilter, LogoutFilter.class)
                 .build();

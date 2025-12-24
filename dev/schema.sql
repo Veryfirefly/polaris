@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS tenants
     address      VARCHAR(128)           DEFAULT NULL COMMENT '联系地址',
     contact_info VARCHAR(64)            DEFAULT NULL COMMENT '联系方式',
     create_time  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE create_time COMMENT '更新时间',
+    update_time  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id),
     UNIQUE KEY uk_name (name)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -36,22 +36,22 @@ CREATE TABLE IF NOT EXISTS users
     PRIMARY KEY (id),
     UNIQUE KEY uk_account (account),
     KEY union_key(account, nickname, create_time)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS roles
 (
     id          BIGINT        NOT NULL AUTO_INCREMENT COMMENT '角色id',
     name        VARBINARY(32) NOT NULL COMMENT '角色权限名称',
-    entity      VARCHAR(16)   NOT NULL COMMENT '',
+    entity      VARCHAR(16)   NOT NULL COMMENT '角色权限实体',
     description VARBINARY(64)          DEFAULT NULL COMMENT '角色权限描述',
     status      TINYINT       NOT NULL DEFAULT 1 COMMENT '角色状态, 0: disable, 1: enable',
     tenant_id   BIGINT        NOT NULL COMMENT '租户id',
-    create_by  BIGINT        NOT NULL COMMENT '由谁创建的角色',
+    create_by   BIGINT        NOT NULL COMMENT '由谁创建的角色',
     create_time TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_by   BIGINT        NOT NULL COMMENT '由谁更改的角色',
     update_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id),
-    UNIQUE KEY uk_name (name)
+    UNIQUE KEY uk_tenant_role (tenant_id, entity)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci COMMENT '角色表';
 
 CREATE TABLE IF NOT EXISTS menus
