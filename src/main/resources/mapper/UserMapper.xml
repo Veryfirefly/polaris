@@ -19,10 +19,50 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="BIGINT" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <association columnPrefix="tenant_" property="tenant" column="tenant_id" javaType="com.xsdq.polaris.repository.po.TenantPO" resultMap="com.xsdq.polaris.repository.dao.TenantDao.TenantMapping"/>
+        <collection columnPrefix="role_" property="roles" javaType="com.xsdq.polaris.repository.po.RolePO" resultMap="com.xsdq.polaris.repository.dao.RoleDao.RoleMapping"/>
     </resultMap>
 
 	<select id="findByAccount" resultMap="UserMapping">
-
+        select
+            t.id as tenant_id,
+            t.name as tenant_name,
+            t.description as tenant_description,
+            t.status as tenant_status,
+            t.logo_path as tenant_logo_path,
+            t.address as tenant_address,
+            t.contact_info as tenant_contact_info,
+            t.create_time as tenant_create_time,
+            t.update_time as tenant_update_time,
+            u.id,
+            u.account,
+            u.password,
+            u.nickname,
+            u.status,
+            u.email,
+            u.phone,
+            u.address,
+            u.avatar_path,
+            u.tenant_id,
+            u.create_by,
+            u.create_time,
+            u.update_by,
+            u.update_time,
+            r.id,
+            r.name,
+            r.entity,
+            r.description,
+            r.status,
+            r.tenant_id,
+            r.create_by,
+            r.create_time,
+            r.update_by,
+            r.update_time
+        from users u
+        left join user_role_relations ur on u.id = ur.user_id
+        left join roles r on r.id = ur.role_id
+        left join tenants t on u.tenant_id = t.id
+        where u.account=#{account}
     </select>
 
 </mapper>

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,6 +41,17 @@ class UserDaoTest {
 	void testQueryUser() {
 		var user = userDao.findByAccount("xiaoyu");
 		assertNotNull(user);
+	}
+
+	@Test
+	void testFindUserByAccount() {
+		var user = userDao.findByAccount("xiaoyu");
+		assertAll(
+				() -> assertNotNull(user),
+				() -> assertNotNull(user.getTenant()),
+				() -> assertNotNull(user.getRoles()),
+				() -> assertFalse(user.getRoles().isEmpty())
+		);
 	}
 
 	UserPO createMockUser(long tenantId) {
