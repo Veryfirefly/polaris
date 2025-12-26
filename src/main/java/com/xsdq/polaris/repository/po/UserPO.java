@@ -2,7 +2,6 @@ package com.xsdq.polaris.repository.po;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -22,7 +21,6 @@ public class UserPO {
     private String address;
     private String avatarPath;
     private Long tenantId;
-    private TenantPO tenant;
     private List<RolePO> roles;
     private Long createBy;
     private LocalDateTime createTime;
@@ -107,14 +105,6 @@ public class UserPO {
 
     public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
-    }
-
-    public TenantPO getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(TenantPO tenant) {
-        this.tenant = tenant;
     }
 
     public List<RolePO> getRoles() {

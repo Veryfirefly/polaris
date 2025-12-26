@@ -1,11 +1,14 @@
 package com.xsdq.polaris.repository.dao;
 
+import java.io.Serializable;
+
 import com.xsdq.polaris.repository.Status;
 import com.xsdq.polaris.repository.po.UserPO;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,6 +27,9 @@ class UserDaoTest {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private RedisTemplate<String, Serializable> redisTemplate;
 
 	@Test
 	void testCreateNewUser() {
@@ -48,7 +54,6 @@ class UserDaoTest {
 		var user = userDao.findByAccount("xiaoyu");
 		assertAll(
 				() -> assertNotNull(user),
-				() -> assertNotNull(user.getTenant()),
 				() -> assertNotNull(user.getRoles()),
 				() -> assertFalse(user.getRoles().isEmpty())
 		);
