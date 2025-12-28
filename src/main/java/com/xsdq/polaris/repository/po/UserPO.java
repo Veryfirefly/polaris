@@ -6,6 +6,8 @@ import java.util.List;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.xsdq.polaris.repository.Status;
+import com.xsdq.polaris.security.PolarisUserDetails;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @TableName("users")
 public class UserPO {
@@ -26,6 +28,11 @@ public class UserPO {
     private LocalDateTime createTime;
     private Long updateBy;
     private LocalDateTime updateTime;
+
+    public UserDetails createUserDetails() {
+        PolarisUserDetails userDetails = new PolarisUserDetails();
+        userDetails.setAccount(account);
+    }
 
     public Long getId() {
         return id;

@@ -2,6 +2,7 @@ package com.xsdq.polaris.security.config;
 
 import java.util.List;
 
+import com.xsdq.polaris.repository.dao.UserDao;
 import com.xsdq.polaris.security.JwtTokenAuthenticationFilter;
 import com.xsdq.polaris.security.PolarisAccessDeniedHandler;
 import com.xsdq.polaris.security.PolarisAuthenticationEntryPoint;
@@ -9,6 +10,7 @@ import com.xsdq.polaris.security.PolarisLogoutSuccessHandler;
 import com.xsdq.polaris.security.PolarisUserDetailsService;
 import com.xsdq.polaris.security.autoconfigure.PolarisSecurityProperties;
 
+import com.xsdq.polaris.service.TenantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,8 +41,8 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new PolarisUserDetailsService();
+    public UserDetailsService userDetailsService(UserDao userDao, TenantService tenantService) {
+        return new PolarisUserDetailsService(userDao, tenantService);
     }
 
     @Bean

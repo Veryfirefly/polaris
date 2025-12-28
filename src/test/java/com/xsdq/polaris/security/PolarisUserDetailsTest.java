@@ -24,7 +24,7 @@ class PolarisUserDetailsTest {
 		var user = userDao.selectById(1L);
 		assertNotNull(user);
 
-		var userDetails = new PolarisUserDetails(user);
+		var userDetails = new PolarisUserDetails();
 		var strJsonUserDetails = objectMapper.writeValueAsString(userDetails);
 		assertTrue(strJsonUserDetails.startsWith("{"));
 
