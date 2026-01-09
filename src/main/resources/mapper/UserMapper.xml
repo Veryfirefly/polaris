@@ -19,7 +19,6 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="BIGINT" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-        <collection columnPrefix="role_" property="roles" resultMap="com.xsdq.polaris.repository.dao.RoleDao.RoleMapping" />
     </resultMap>
 
 	<select id="findByAccount" resultMap="UserMapping">
@@ -37,21 +36,8 @@
             u.create_by,
             u.create_time,
             u.update_by,
-            u.update_time,
-            r.id as role_id,
-            r.name as role_name,
-            r.entity as role_entity,
-            r.description as role_description,
-            r.status as role_status,
-            r.tenant_id as role_tenant_id,
-            r.create_by as role_create_by,
-            r.create_time as role_create_time,
-            r.update_by as role_update_by,
-            r.update_time as role_update_time
+            u.update_time
         from users u
-        left join user_role_relations ur on u.id = ur.user_id
-        left join roles r on r.id = ur.role_id
-        left join tenants t on u.tenant_id = t.id
         where u.account=#{account}
     </select>
 

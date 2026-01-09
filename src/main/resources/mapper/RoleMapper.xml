@@ -15,6 +15,33 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="BIGINT" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <collection columnPrefix="perm_" property="permissions" javaType="java.util.List" ofType="com.xsdq.polaris.repository.po.PermissionPO">
+            <id column="id" property="id" jdbcType="BIGINT" />
+            <result column="name" property="name" jdbcType="VARBINARY" />
+            <result column="permission" property="permission" jdbcType="VARCHAR" />
+        </collection>
     </resultMap>
+
+    <select id="findRolesByUserId" resultMap="RoleMapping">
+        select
+            r.id,
+            r.name,
+            r.entity,
+            r.description,
+            r.status,
+            r.tenant_id,
+            r.create_by,
+            r.create_time,
+            r.update_by,
+            r.update_time,
+            m.id as perm_id,
+            m.name as perm_name,
+            m.permission as perm_permission
+        from user_role_relations ur
+        left join roles r on r.id = ur.role_id
+        left join role_menu_relations rm on r.id = rm.role_id
+        left join menus m on rm.menu_id = m.id
+        where ur.user_id = #{userId};
+    </select>
 
 </mapper>

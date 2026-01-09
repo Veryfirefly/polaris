@@ -1,33 +1,42 @@
 package com.xsdq.polaris.security;
 
+import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xsdq.polaris.http.useragent.UserAgent;
+import com.xsdq.polaris.repository.Status;
+import com.xsdq.polaris.repository.po.UserPO;
 import com.xsdq.polaris.tenant.TenantId;
+import lombok.Data;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.xsdq.polaris.repository.Status;
-import com.xsdq.polaris.repository.po.UserPO;
-
+@Data
 public class PolarisUserDetails implements UserDetails, Serializable {
 
-    private long tenantId; // no need tenant object, because we cached use another key.
     private boolean enabledTenant;
-    private UserPO userHolder;
-    private List<GrantedAuthority> authorities;
+    private UserPO user;
+    private String identifier;
+    private String token;
     private String os;
+    private String osVersion;
+    private String engine;
+    private String engineVersion;
     private String browser;
+    private String browserVersion;
+    private String platform;
     private String ipAddress;
     private long loginTimeMs;
     private long expireTimeMs;
-    private long windowTime;
+    private long refreshWindowTime;
+    private Set<GrantedAuthority> authorities;
 
-    @JsonIgnore
 	@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -36,13 +45,13 @@ public class PolarisUserDetails implements UserDetails, Serializable {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return userHolder.getPassword();
+        return user.getPassword();
     }
 
     @JsonIgnore
     @Override
     public String getUsername() {
-        return userHolder.getAccount();
+        return user.getAccount();
     }
 
     @JsonIgnore
@@ -66,91 +75,105 @@ public class PolarisUserDetails implements UserDetails, Serializable {
     @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return userHolder.getStatus() == Status.ENABLED;
-    }
-
-    public UserPO getUserHolder() {
-        return userHolder;
-    }
-
-    public void setUserHolder(UserPO userHolder) {
-        this.userHolder = userHolder;
-    }
-
-    public void setTenantId(long tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public long getTenantId() {
-        return tenantId;
-    }
-
-    public void setEnabledTenant(boolean enabledTenant) {
-        this.enabledTenant = enabledTenant;
-    }
-
-    public boolean isEnabledTenant() {
-        return enabledTenant;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setBrowser(String browser) {
-        this.browser = browser;
-    }
-
-    public String getBrowser() {
-        return browser;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setLoginTimeMs(long loginTimeMs) {
-        this.loginTimeMs = loginTimeMs;
-    }
-
-    public long getLoginTimeMs() {
-        return loginTimeMs;
-    }
-
-    public void setExpireTimeMs(long expireTimeMs) {
-        this.expireTimeMs = expireTimeMs;
-    }
-
-    public long getExpireTimeMs() {
-        return expireTimeMs;
-    }
-
-    public void setWindowTime(long windowTime) {
-        this.windowTime = windowTime;
-    }
-
-    public long getWindowTime() {
-        return windowTime;
-    }
-
-    public void setAuthorities(List<GrantedAuthority> authorities) {
-        this.authorities = authorities;
+        return user.getStatus() == Status.ENABLED;
     }
 
     public TenantId tenantId() {
-        return new TenantId(tenantId);
+        return new TenantId(user.getTenantId());
     }
 
+    @JsonIgnore
     public boolean isExpiration() {
         // (expire time - now) <= window time
-        return (expireTimeMs - Instant.now().toEpochMilli()) <= windowTime;
+        return (expireTimeMs - Instant.now().toEpochMilli()) <= refreshWindowTime;
+    }
+
+    public static class Builder {
+        private boolean enabledTenant;
+        private UserPO user;
+        private String os;
+        private String osVersion;
+        private String engine;
+        private String engineVersion;
+        private String browser;
+        private String browserVersion;
+        private String platform;
+        private String ipAddress;
+        private long loginTimeMs;
+        private long expireTimeMs;
+        private long refreshWindowTime;
+        private Set<GrantedAuthority> authorities;
+
+        public Builder() {}
+
+        public Builder enabledTenant(boolean enabledTenant) {
+            this.enabledTenant = enabledTenant;
+            return this;
+        }
+
+        public Builder user(UserPO user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder userAgent(Supplier<UserAgent> func) {
+            UserAgent userAgent = func.get();
+            this.os = userAgent.getOs().getName();
+            this.osVersion = userAgent.getOsVersion();
+            this.engine = userAgent.getEngine().getName();
+            this.engineVersion = userAgent.getEngineVersion();
+            this.browser = userAgent.getBrowser().getName();
+            this.browserVersion = userAgent.getVersion();
+            this.platform = userAgent.getPlatform().getName();
+            return this;
+        }
+
+        public Builder ipAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+            return this;
+        }
+
+        public  Builder loginTimeMs(long loginTimeMs) {
+            this.loginTimeMs = loginTimeMs;
+            return this;
+        }
+
+        public Builder calculateExpireTime(Duration duration) {
+            return expireTimeMs(loginTimeMs + duration.toMillis());
+        }
+
+        public Builder expireTimeMs(long expireTimeMs) {
+            this.expireTimeMs = expireTimeMs;
+            return this;
+        }
+
+        public Builder refreshWindowTime(long refreshWindowTime) {
+            this.refreshWindowTime = refreshWindowTime;
+            return this;
+        }
+
+        public Builder authorities(Set<GrantedAuthority> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
+
+        public PolarisUserDetails build() {
+            PolarisUserDetails userDetails = new PolarisUserDetails();
+            userDetails.setEnabledTenant(enabledTenant);
+            userDetails.setUser(user);
+            userDetails.setOs(os);
+            userDetails.setOsVersion(osVersion);
+            userDetails.setBrowser(browser);
+            userDetails.setBrowserVersion(browserVersion);
+            userDetails.setEngine(engine);
+            userDetails.setEngineVersion(engineVersion);
+            userDetails.setPlatform(platform);
+            userDetails.setIpAddress(ipAddress);
+            userDetails.setLoginTimeMs(loginTimeMs);
+            userDetails.setExpireTimeMs(expireTimeMs);
+            userDetails.setRefreshWindowTime(refreshWindowTime);
+            userDetails.setAuthorities(authorities);
+            return userDetails;
+        }
     }
 }

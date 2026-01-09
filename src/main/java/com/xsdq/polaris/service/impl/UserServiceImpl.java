@@ -1,6 +1,9 @@
 package com.xsdq.polaris.service.impl;
 
 import com.xsdq.polaris.repository.dao.UserDao;
+import com.xsdq.polaris.repository.po.UserPO;
+import com.xsdq.polaris.security.JwtTokenService;
+import com.xsdq.polaris.security.PolarisUserDetails;
 import com.xsdq.polaris.service.UserService;
 
 import org.springframework.context.annotation.Lazy;
@@ -20,10 +23,15 @@ public class UserServiceImpl implements UserService {
 
 	private final UserDao userDao;
 	private final AuthenticationManager authenticationManager;
+	private final JwtTokenService tokenService;
 
-	public UserServiceImpl(UserDao userDao, @Lazy AuthenticationManager authenticationManager) {
+	public UserServiceImpl(
+			UserDao userDao,
+			@Lazy AuthenticationManager authenticationManager,
+			JwtTokenService tokenService) {
 		this.userDao = userDao;
 		this.authenticationManager = authenticationManager;
+		this.tokenService = tokenService;
 	}
 
 	@Override
@@ -31,7 +39,13 @@ public class UserServiceImpl implements UserService {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(account, password);
 		Authentication authentication = authenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		PolarisUserDetails userDetails = (PolarisUserDetails) authentication.getPrincipal();
 
-		return "";
+		return tokenService.createToken(userDetails);
+	}
+
+	@Override
+	public UserPO getUserByAccount(String account) {
+		return userDao.findByAccount(account);
 	}
 }

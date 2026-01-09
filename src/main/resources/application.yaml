@@ -17,8 +17,10 @@ spring:
     url: jdbc:mysql://127.0.0.1:3307/polaris?useUnicode=true&characterEncoding=utf8
 polaris:
   security:
-    token-salt: N/A(Please Configure)
-    token-expire-duration: P7D
+    token:
+      signing-key: 683d57561ce3aa0872c8ebdd700aab2c4a75fd080db36d58288fea1eda95276288340ddcf0baff497fefe6f93fbb26eb7895ef929dfa1dbb11a1273ee6f82fb5
+      expire-duration: P7D
+      refresh-window-time: PT1H
     logout-url: /api/auth/logout
     permit-urls:
       - /api/auth/login
@@ -31,3 +33,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: on
   mapper-locations: classpath:/mapper/**.xml
+logging:
+  level:
+    org.apache.ibatis: debug
+    com.baomidou: debug

@@ -1,6 +1,7 @@
 package com.xsdq.polaris.repository.po;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -24,6 +25,7 @@ public class RolePO {
 	private LocalDateTime createTime;
 	private Long updateBy;
 	private LocalDateTime updateTime;
+	private List<PermissionPO> permissions;
 
 	public Long getId() {
 		return id;
@@ -103,5 +105,21 @@ public class RolePO {
 
 	public void setUpdateTime(LocalDateTime updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public List<PermissionPO> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<PermissionPO> permissions) {
+		this.permissions = permissions;
+	}
+
+	public boolean enabled() {
+		return status == Status.ENABLED;
+	}
+
+	public boolean disabled() {
+		return status == Status.DISABLED;
 	}
 }

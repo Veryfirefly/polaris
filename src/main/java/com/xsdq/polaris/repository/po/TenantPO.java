@@ -92,4 +92,12 @@ public class TenantPO {
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
+
+    public boolean enabled() {
+        return status == Status.ENABLED;
+    }
+
+    public boolean disabled() {
+        return status == Status.DISABLED;
+    }
 }

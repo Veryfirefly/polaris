@@ -9,5 +9,5 @@ import com.xsdq.polaris.repository.po.TenantPO;
  */
 public interface TenantService {
 
-	TenantPO findTenantById(long tenantId);
+	TenantPO getTenantById(long tenantId);
 }

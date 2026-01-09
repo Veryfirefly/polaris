@@ -23,7 +23,7 @@ public class TenantServiceImpl implements TenantService {
 
 	@Override
 	@Cacheable(cacheNames = "polaris:tenant", key = "#tenantId")
-	public TenantPO findTenantById(long tenantId) {
+	public TenantPO getTenantById(long tenantId) {
 		return tenantDao.selectById(tenantId);
 	}
 }

@@ -1,4 +1,4 @@
 package com.xsdq.polaris.tenant;
 
-public record TenantId(long tenantId) {
+public record TenantId(long id) {
 }

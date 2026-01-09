@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users
     id          BIGINT      NOT NULL AUTO_INCREMENT COMMENT '用户id',
     account     VARCHAR(64) NOT NULL COMMENT '用户登录账号',
     password    VARCHAR(64) NOT NULL COMMENT '用户密码',
-    nickname    VARCHAR(64) NOT NULL COMMENT '用户昵称',
+    nickname    VARBINARY(64) NOT NULL COMMENT '用户昵称',
     status      TINYINT     NOT NULL DEFAULT 1 COMMENT '用户状态, 0:disable, 1: enable',
     email       VARCHAR(32)          DEFAULT NULL COMMENT '用户邮箱, 用于发送验证邮件',
     phone       VARCHAR(16)          DEFAULT NULL COMMENT '用户手机号, 预备参数, 防止后面接入sms',
@@ -98,13 +98,28 @@ CREATE TABLE IF NOT EXISTS role_menu_relations
     PRIMARY KEY (role_id, menu_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '角色菜单表关联';
 
-CREATE TABLE IF NOT EXISTS login_history
+CREATE TABLE IF NOT EXISTS operation_histories
 (
     id BIGINT NOT NULL  AUTO_INCREMENT COMMENT '自增长id',
     user_id BIGINT NOT NULL COMMENT '用户id',
-    browser VARCHAR(16) DEFAULT NULL COMMENT '浏览器版本',
-    os VARCHAR(16) DEFAULT NULL COMMENT '',
-    ip VARCHAR(32) DEFAULT NULL COMMENT '',
+    account VARCHAR(64) NOT NULL COMMENT '用户账号',
+    nickname VARBINARY(64) NOT NULL COMMENT '用户昵称',
+    tenant_id   BIGINT NOT NULL COMMENT '租户id',
+    tenant_name VARBINARY(64) NOT NULL COMMENT '租户名称',
+    os VARCHAR(64) DEFAULT NULL COMMENT '操作系统',
+    os_version  VARCHAR(64) DEFAULT NULL COMMENT '操作系统版本号',
+    platform VARCHAR(64) DEFAULT NULL COMMENT '操作系统平台',
+    browser VARCHAR(64) DEFAULT NULL COMMENT '浏览器型号',
+    browser_version VARCHAR(64) DEFAULT NULL COMMENT '浏览器版本',
+    engine VARCHAR(64) DEFAULT NULL COMMENT '引擎型号',
+    engine_version VARCHAR(64) DEFAULT NULL COMMENT '引擎版本',
+    ip_addr VARCHAR(64) DEFAULT NULL COMMENT 'ip地址',
+    geo_location VARCHAR(64) DEFAULT NULL COMMENT '地理位置',
+    url VARCHAR(256) NOT NULL COMMENT '请求地址',
+    req_method VARCHAR(32) NOT NULL COMMENT 'http请求方法',
+    parameter VARCHAR(2048) DEFAULT NULL COMMENT '请求参数',
+    response  VARCHAR(2048) DEFAULT NULL COMMENT '返回结果',
+    status TINYINT NOT NULL DEFAULT 0 COMMENT '操作状态, 0: 异常, 1: 正常',
     create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (id),
     INDEX (create_time, user_id)

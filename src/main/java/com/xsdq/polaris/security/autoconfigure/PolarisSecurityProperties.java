@@ -1,53 +1,37 @@
 package com.xsdq.polaris.security.autoconfigure;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.time.Duration;
 import java.util.Set;
 
+import io.jsonwebtoken.security.Keys;
+import lombok.Data;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Data
 @Configuration
 @ConfigurationProperties(prefix = "polaris.security")
 public class PolarisSecurityProperties {
 
-    private String tokenSalt;
-    private Duration tokenExpireDuration;
+    private Token token;
     private Set<String> permitUrls;
     private String logoutUrl;
 
-    public String getTokenSalt() {
-        return tokenSalt;
-    }
-
-    public void setTokenSalt(String tokenSalt) {
-        this.tokenSalt = tokenSalt;
-    }
-
-    public Duration getTokenExpireDuration() {
-        return tokenExpireDuration;
-    }
-
-    public void setTokenExpireDuration(Duration tokenExpireDuration) {
-        this.tokenExpireDuration = tokenExpireDuration;
-    }
-
-    public Set<String> getPermitUrls() {
-        return permitUrls;
-    }
-
-    public void setPermitUrls(Set<String> permitUrls) {
-        this.permitUrls = permitUrls;
-    }
-
-    public String getLogoutUrl() {
-        return logoutUrl;
-    }
-
-    public void setLogoutUrl(String logoutUrl) {
-        this.logoutUrl = logoutUrl;
-    }
-
-    public String[] toPermitUrls() {
+    public String[] permitUrls() {
         return getPermitUrls().toArray(new String[0]);
+    }
+
+    @Data
+    public static class Token {
+        private String signingKey;
+        private Duration expireDuration;
+        private Duration refreshWindowTime;
+
+        public Key signingKey() {
+            return Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
+        }
     }
 }

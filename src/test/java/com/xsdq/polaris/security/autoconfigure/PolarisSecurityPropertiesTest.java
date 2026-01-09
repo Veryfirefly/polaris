@@ -15,7 +15,7 @@ class PolarisSecurityPropertiesTest {
 
 	@Test
 	void testPermitUrls() {
-		var permitUrls = securityProps.toPermitUrls();
+		var permitUrls = securityProps.permitUrls();
 		assertNotNull(permitUrls);
 		assertTrue(permitUrls.length > 0);
 

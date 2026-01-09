@@ -27,4 +27,10 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
+    <resultMap id="PermissionMapping" type="com.xsdq.polaris.repository.po.PermissionPO">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARBINARY" />
+        <result column="permission" property="permission" jdbcType="VARCHAR" />
+    </resultMap>
+
 </mapper>

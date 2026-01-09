@@ -2,8 +2,6 @@ package com.xsdq.polaris.repository.dao;
 
 import java.io.Serializable;
 
-import com.xsdq.polaris.repository.Status;
-import com.xsdq.polaris.repository.po.UserPO;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +10,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class UserDaoTest {
+class UserDaoTests implements UserMockDataTestKit {
 
 	@Autowired
 	private UserDao userDao;
@@ -53,23 +50,12 @@ class UserDaoTest {
 	void testFindUserByAccount() {
 		var user = userDao.findByAccount("xiaoyu");
 		assertAll(
-				() -> assertNotNull(user),
-				() -> assertNotNull(user.getRoles()),
-				() -> assertFalse(user.getRoles().isEmpty())
+				() -> assertNotNull(user)
 		);
 	}
 
-	UserPO createMockUser(long tenantId) {
-		var user = new UserPO();
-		user.setAccount("xiaoyu");
-		user.setPassword(passwordEncoder.encode("123456"));
-		user.setTenantId(tenantId);
-		user.setNickname("测试昵称");
-		user.setStatus(Status.ENABLED);
-		user.setEmail("xiaoyu@polaris.com");
-		user.setPhone("13112345678");
-		user.setCreateBy(0L);
-		user.setUpdateBy(0L);
-		return user;
+	@Override
+	public PasswordEncoder passwordEncoder() {
+		return passwordEncoder;
 	}
 }
