@@ -1,0 +1,15 @@
+GET http://localhost:8080/api/dashboard/analysis/whatfuck
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyNjNkNTA4YS1hNzk4LTQzYzEtYTA1Ni02OGVjYTM1YmZjMzYiLCJ0aWQiOjIwMDM3MjkxMzE3NTQ2MjI5Nzd9.GfichvvWaC_pzM8cBIGRt9pos4dPwekC3r63lGuYNxTS3rzZs3FUw807vvjc__qXaKKFLAuJITGxajE972OF5Q
+
+### Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "account": "xiaoyu",
+  "password": "123456"
+}
+
+### Logout
+POST http://localhost:8080/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2YzNjZTkzNi0xNzg4LTRhY2MtOTVmYS00OWZkZTM3MDE1NzIiLCJ0aWQiOjIwMDM3MjkxMzE3NTQ2MjI5Nzd9.V3Us1MDilpAtbIq1E4bdCsVw-D6cp-0Nl6ZnMWACVPUwZpiiR7nLZf0U2GP3Iv4P_tpx96eejkjSjemc746q1w

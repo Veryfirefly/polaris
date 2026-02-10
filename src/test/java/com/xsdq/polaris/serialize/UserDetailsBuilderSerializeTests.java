@@ -43,7 +43,6 @@ class UserDetailsBuilderSerializeTests extends MockServletTestKit implements Use
 				.ipAddress(Utils.getClientIpByHeader(request))
 				.loginTimeMs(Instant.now().toEpochMilli())
 				.calculateExpireTime(expireDuration)
-				.refreshWindowTime(refreshWindowTimeDuration.toMillis())
 				.authorities(mockAuthorities())
 				.build();
 

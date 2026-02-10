@@ -1,5 +1,6 @@
 package com.xsdq.polaris.repository.vo;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +14,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class LoginRequest {
 
+	@NotEmpty
 	private String account;
+
+	@NotEmpty
 	private String password;
 }

@@ -2,14 +2,17 @@ package com.xsdq.polaris.security.config;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsdq.polaris.security.DynamicDecisionAuthorizationManager;
 import com.xsdq.polaris.security.JwtTokenAuthenticationFilter;
-import com.xsdq.polaris.security.PolarisAccessDeniedHandler;
-import com.xsdq.polaris.security.PolarisAuthenticationEntryPoint;
-import com.xsdq.polaris.security.PolarisAuthenticationSuccessHandler;
-import com.xsdq.polaris.security.PolarisLogoutSuccessHandler;
+import com.xsdq.polaris.security.JwtTokenService;
+import com.xsdq.polaris.security.DefaultAccessDeniedHandler;
+import com.xsdq.polaris.security.DefaultAuthenticationEntryPoint;
+import com.xsdq.polaris.security.DefaultAuthenticationSuccessHandler;
+import com.xsdq.polaris.security.DefaultLogoutSuccessHandler;
 import com.xsdq.polaris.security.PolarisUserDetailsService;
 import com.xsdq.polaris.security.autoconfigure.PolarisSecurityProperties;
+import com.xsdq.polaris.service.MenuService;
 import com.xsdq.polaris.service.RoleService;
 import com.xsdq.polaris.service.TenantService;
 import com.xsdq.polaris.service.UserService;
@@ -58,28 +61,28 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public JwtTokenAuthenticationFilter authenticationFilter() {
-        return new JwtTokenAuthenticationFilter();
+    public JwtTokenAuthenticationFilter authenticationFilter(JwtTokenService tokenService) {
+        return new JwtTokenAuthenticationFilter(tokenService);
     }
 
     @Bean
     public ApplicationListener<AuthenticationSuccessEvent> authenticationSuccessEventHandler(ApplicationEventPublisher eventPublisher) {
-        return new PolarisAuthenticationSuccessHandler(eventPublisher);
+        return new DefaultAuthenticationSuccessHandler(eventPublisher);
     }
 
     @Bean
-    public LogoutSuccessHandler logoutSuccessHandler() {
-        return new PolarisLogoutSuccessHandler();
+    public LogoutSuccessHandler logoutSuccessHandler(JwtTokenService tokenService, ObjectMapper objectMapper) {
+        return new DefaultLogoutSuccessHandler(tokenService, objectMapper);
     }
 
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new PolarisAuthenticationEntryPoint();
+    public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
+        return new DefaultAuthenticationEntryPoint(objectMapper);
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new PolarisAccessDeniedHandler();
+    public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+        return new DefaultAccessDeniedHandler(objectMapper);
     }
 
     @Bean
@@ -88,8 +91,8 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public AuthorizationManager<RequestAuthorizationContext> dynamicDecisionAuthorizationManager() {
-        return new DynamicDecisionAuthorizationManager();
+    public AuthorizationManager<RequestAuthorizationContext> dynamicDecisionAuthorizationManager(MenuService menuService) {
+        return new DynamicDecisionAuthorizationManager(menuService);
     }
 
     @Bean
@@ -105,13 +108,14 @@ public class SpringSecurityConfig {
                 .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry ->
-                        registry.requestMatchers(securityProps.permitUrls()).permitAll()
+                        registry.requestMatchers(securityProps.whitelistUrls()).permitAll()
                                 .anyRequest().access(authorizationManager))
                 .exceptionHandling(configurer ->
                         configurer.authenticationEntryPoint(authenticationEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler))
                 .logout(configurer ->
-                        configurer.logoutUrl(securityProps.getLogoutUrl()).logoutSuccessHandler(logoutSuccessHandler)
+                        configurer.logoutRequestMatcher(securityProps.logoutRequestMatcher())
+                                .logoutSuccessHandler(logoutSuccessHandler)
                                 .clearAuthentication(false))
                 .addFilterBefore(authenticationFilter, LogoutFilter.class)
                 .build();

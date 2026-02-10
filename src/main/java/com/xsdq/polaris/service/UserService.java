@@ -1,6 +1,7 @@
 package com.xsdq.polaris.service;
 
 import com.xsdq.polaris.repository.po.UserPO;
+import com.xsdq.polaris.repository.vo.LoginRequest;
 
 /**
  *
@@ -9,7 +10,9 @@ import com.xsdq.polaris.repository.po.UserPO;
  */
 public interface UserService {
 
-	String login(String account, String password);
+	// todo maybe we don't need the method
+	@Deprecated
+	String login(LoginRequest request);
 
 	UserPO getUserByAccount(String account);
 }

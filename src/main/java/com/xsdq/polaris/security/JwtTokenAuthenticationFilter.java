@@ -8,6 +8,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -16,9 +20,26 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
+	private final JwtTokenService tokenService;
+
+	public JwtTokenAuthenticationFilter(JwtTokenService tokenService) {
+		this.tokenService = tokenService;
+	}
+
 	@Override
 	protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response,
 			@Nonnull FilterChain filterChain) throws ServletException, IOException {
+		UserDetails userDetails = tokenService.getUserDetails(request);
+		if (userDetails != null && notAuthenticatedWithSecurityContext()) {
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+					userDetails, null, userDetails.getAuthorities());
+			authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+		}
 		filterChain.doFilter(request, response);
+	}
+
+	private boolean notAuthenticatedWithSecurityContext() {
+		return SecurityContextHolder.getContext().getAuthentication() == null;
 	}
 }

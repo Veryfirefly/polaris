@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xsdq.polaris.http.useragent.UserAgent;
 import com.xsdq.polaris.repository.Status;
 import com.xsdq.polaris.repository.po.UserPO;
-import com.xsdq.polaris.tenant.TenantId;
 import lombok.Data;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -34,7 +33,6 @@ public class PolarisUserDetails implements UserDetails, Serializable {
     private String ipAddress;
     private long loginTimeMs;
     private long expireTimeMs;
-    private long refreshWindowTime;
     private Set<GrantedAuthority> authorities;
 
 	@Override
@@ -78,30 +76,36 @@ public class PolarisUserDetails implements UserDetails, Serializable {
         return user.getStatus() == Status.ENABLED;
     }
 
-    public TenantId tenantId() {
-        return new TenantId(user.getTenantId());
+    public Long tenantId() {
+        return user.getTenantId();
+    }
+
+    public String account() {
+        return user.getAccount();
     }
 
     @JsonIgnore
-    public boolean isExpiration() {
-        // (expire time - now) <= window time
-        return (expireTimeMs - Instant.now().toEpochMilli()) <= refreshWindowTime;
+    public boolean isExpiration(Duration refreshWindowDuration) {
+        // (expire time - now) <= refresh window duration
+        return (expireTimeMs - Instant.now().toEpochMilli()) <= refreshWindowDuration.toMillis();
     }
 
     public static class Builder {
+
+        private static final String EMPTY_STR = "";
+
         private boolean enabledTenant;
         private UserPO user;
-        private String os;
-        private String osVersion;
-        private String engine;
-        private String engineVersion;
-        private String browser;
-        private String browserVersion;
-        private String platform;
-        private String ipAddress;
+        private String os = EMPTY_STR;
+        private String osVersion = EMPTY_STR;
+        private String engine = EMPTY_STR;
+        private String engineVersion = EMPTY_STR;
+        private String browser = EMPTY_STR;
+        private String browserVersion = EMPTY_STR;
+        private String platform = EMPTY_STR;
+        private String ipAddress = EMPTY_STR;
         private long loginTimeMs;
         private long expireTimeMs;
-        private long refreshWindowTime;
         private Set<GrantedAuthority> authorities;
 
         public Builder() {}
@@ -118,13 +122,15 @@ public class PolarisUserDetails implements UserDetails, Serializable {
 
         public Builder userAgent(Supplier<UserAgent> func) {
             UserAgent userAgent = func.get();
-            this.os = userAgent.getOs().getName();
-            this.osVersion = userAgent.getOsVersion();
-            this.engine = userAgent.getEngine().getName();
-            this.engineVersion = userAgent.getEngineVersion();
-            this.browser = userAgent.getBrowser().getName();
-            this.browserVersion = userAgent.getVersion();
-            this.platform = userAgent.getPlatform().getName();
+            if (userAgent != null) {
+                this.os = userAgent.getOs().getName();
+                this.osVersion = userAgent.getOsVersion();
+                this.engine = userAgent.getEngine().getName();
+                this.engineVersion = userAgent.getEngineVersion();
+                this.browser = userAgent.getBrowser().getName();
+                this.browserVersion = userAgent.getVersion();
+                this.platform = userAgent.getPlatform().getName();
+            }
             return this;
         }
 
@@ -147,11 +153,6 @@ public class PolarisUserDetails implements UserDetails, Serializable {
             return this;
         }
 
-        public Builder refreshWindowTime(long refreshWindowTime) {
-            this.refreshWindowTime = refreshWindowTime;
-            return this;
-        }
-
         public Builder authorities(Set<GrantedAuthority> authorities) {
             this.authorities = authorities;
             return this;
@@ -171,7 +172,6 @@ public class PolarisUserDetails implements UserDetails, Serializable {
             userDetails.setIpAddress(ipAddress);
             userDetails.setLoginTimeMs(loginTimeMs);
             userDetails.setExpireTimeMs(expireTimeMs);
-            userDetails.setRefreshWindowTime(refreshWindowTime);
             userDetails.setAuthorities(authorities);
             return userDetails;
         }

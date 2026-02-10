@@ -64,7 +64,7 @@ public abstract class MockServletTestKit {
 		this.shouldQueryWhoisInfo = shouldQueryWhoisInfo;
 	}
 
-	String randomChoiceUserAgent() {
+	public String randomChoiceUserAgent() {
 		return USER_AGENT_SAMPLES[new Random().nextInt(USER_AGENT_SAMPLES.length)];
 	}
 

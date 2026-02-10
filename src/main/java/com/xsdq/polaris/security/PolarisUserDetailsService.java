@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.xsdq.polaris.error.PolarisRuntimeException;
 import com.xsdq.polaris.http.useragent.UserAgentParser;
-import com.xsdq.polaris.repository.po.PermissionPO;
+import com.xsdq.polaris.repository.Permission;
 import com.xsdq.polaris.repository.po.RolePO;
 import com.xsdq.polaris.repository.po.TenantPO;
 import com.xsdq.polaris.repository.po.UserPO;
@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -59,16 +58,17 @@ public class PolarisUserDetailsService implements UserDetailsService {
         List<RolePO> roles = roleService.getRolesByUserId(user.getId());
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (RolePO role : roles) {
-            if (role.disabled()) {
+            if (!role.enable()) {
                 log.trace("The user '{}' has had the '{}' role permission disabled.", username, role.getEntity());
                 continue;
             }
 
-            for (PermissionPO permission : role.getPermissions()) {
-                authorities.add(new PolarisPermissionGrantedAuthority(permission.getName(), permission.getPermission()));
+            for (Permission permission : role.permissions()) {
+                authorities.add(permission.authority());
             }
-            // undefined custom RoleVoter
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getEntity()));
+            // Use the default role-based voter style because we don't need to write annotations.
+            // todo an error occurred while jackson deserialization
+//            authorities.add(role.authority());
         }
 
         return new PolarisUserDetails.Builder()
@@ -77,7 +77,6 @@ public class PolarisUserDetailsService implements UserDetailsService {
                 .userAgent(() -> UserAgentParser.parse(Utils.getRequest()))
                 .loginTimeMs(Instant.now().toEpochMilli())
                 .calculateExpireTime(securityProperties.getToken().getExpireDuration())
-                .refreshWindowTime(securityProperties.getToken().getRefreshWindowTime().toMillis())
                 .authorities(authorities)
                 .build();
     }

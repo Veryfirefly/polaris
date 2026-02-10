@@ -15,9 +15,13 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="BIGINT" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-        <collection columnPrefix="perm_" property="permissions" javaType="java.util.List" ofType="com.xsdq.polaris.repository.po.PermissionPO">
+        <collection columnPrefix="perm_" property="permissions" javaType="java.util.List" ofType="com.xsdq.polaris.repository.po.MenuPO">
             <id column="id" property="id" jdbcType="BIGINT" />
             <result column="name" property="name" jdbcType="VARBINARY" />
+            <result column="type" property="type" jdbcType="TINYINT" />
+            <result column="url" property="url" jdbcType="VARBINARY" />
+            <result column="method" property="method" jdbcType="VARBINARY" />
+            <result column="status" property="status" jdbcType="TINYINT" />
             <result column="permission" property="permission" jdbcType="VARCHAR" />
         </collection>
     </resultMap>
@@ -36,6 +40,10 @@
             r.update_time,
             m.id as perm_id,
             m.name as perm_name,
+            m.type as perm_type,
+            m.url as perm_url,
+            m.method as perm_method,
+            m.status as perm_status,
             m.permission as perm_permission
         from user_role_relations ur
         left join roles r on r.id = ur.role_id

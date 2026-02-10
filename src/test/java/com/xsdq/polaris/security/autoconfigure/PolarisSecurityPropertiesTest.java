@@ -15,11 +15,11 @@ class PolarisSecurityPropertiesTest {
 
 	@Test
 	void testPermitUrls() {
-		var permitUrls = securityProps.permitUrls();
-		assertNotNull(permitUrls);
-		assertTrue(permitUrls.length > 0);
+		String[] whitelistUrls = securityProps.whitelistUrls();
+		assertNotNull(whitelistUrls);
+		assertTrue(whitelistUrls.length > 0);
 
-		for (var url : permitUrls) {
+		for (String url : whitelistUrls) {
 			assertTrue(url.startsWith("/"));
 		}
 	}

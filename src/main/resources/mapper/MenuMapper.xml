@@ -27,10 +27,9 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
-    <resultMap id="PermissionMapping" type="com.xsdq.polaris.repository.po.PermissionPO">
-        <id column="id" property="id" jdbcType="BIGINT" />
-        <result column="name" property="name" jdbcType="VARBINARY" />
-        <result column="permission" property="permission" jdbcType="VARCHAR" />
-    </resultMap>
+    <sql id="QueryFullColumn">
+        id, parent_id, name, url, method, path, component, redirect, type, order, status, permission, icon_path, title,
+        cacheable, hidden_header, target, remark, create_time, update_time
+    </sql>
 
 </mapper>

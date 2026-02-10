@@ -11,11 +11,11 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
  * @author XiaoYu
  * @since 2025/12/30 10:04
  */
-public class PolarisAuthenticationSuccessHandler implements ApplicationListener<AuthenticationSuccessEvent> {
+public class DefaultAuthenticationSuccessHandler implements ApplicationListener<AuthenticationSuccessEvent> {
 
 	private final ApplicationEventPublisher eventPublisher;
 
-	public PolarisAuthenticationSuccessHandler(ApplicationEventPublisher eventPublisher) {
+	public DefaultAuthenticationSuccessHandler(ApplicationEventPublisher eventPublisher) {
 		this.eventPublisher = eventPublisher;
 	}
 
