@@ -21,6 +21,11 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
+    <sql id="QueryFullColumns">
+        u.id, u.account, u.password, u.nickname, u.status, u.email, u.phone, u.address, u.avatar_path, u.tenant_id,
+        u.create_by, u.create_time, u.update_by, u.update_time
+    </sql>
+
 	<select id="findByAccount" resultMap="UserMapping">
         select
             u.id,
@@ -39,6 +44,12 @@
             u.update_time
         from users u
         where u.account=#{account}
+    </select>
+
+    <select id="findUsersByTenantId" resultMap="UserMapping">
+        select <include refid="QueryFullColumns"/>
+        from users u
+        inner join tenants t on u.tenant_id = t.id
     </select>
 
 </mapper>

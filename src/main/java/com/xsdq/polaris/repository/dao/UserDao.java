@@ -1,5 +1,7 @@
 package com.xsdq.polaris.repository.dao;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xsdq.polaris.repository.po.UserPO;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,4 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserDao extends BaseMapper<UserPO> {
 
 	UserPO findByAccount(String account);
+
+	List<UserPO> findUsersByTenantId(long tenantId);
 }

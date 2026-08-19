@@ -1,7 +1,6 @@
 package com.xsdq.polaris.security.autoconfigure;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Duration;
 import java.util.Set;
 
@@ -37,8 +36,8 @@ public class PolarisSecurityProperties {
     @Data
     public static class Token {
         private String signingKey;
-        private Duration expireDuration;
-        private Duration refreshWindowDuration;
+        private Duration timeToLive;
+        private Duration timeToRefresh;
         private String headerName;
 
         public SecretKey signingKey() {

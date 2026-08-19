@@ -56,28 +56,30 @@ CREATE TABLE IF NOT EXISTS roles
 
 CREATE TABLE IF NOT EXISTS menus
 (
-    id            BIGINT        NOT NULL AUTO_INCREMENT COMMENT '角色id',
-    parent_id     BIGINT                 DEFAULT 0 COMMENT '父级菜单id, 0为顶级菜单',
-    name          VARBINARY(64) NOT NULL COMMENT '菜单唯一标识符',
-    url           VARCHAR(128)           DEFAULT NULL COMMENT '接口路径',
-    method        VARCHAR(8)             DEFAULT NULL COMMENT 'http请求方法, 与url共同组成支持restful请求',
-    path          VARCHAR(128)           DEFAULT NULL COMMENT '前端路径',
-    component     VARCHAR(128)           DEFAULT NULL COMMENT '菜单组件',
-    redirect      VARCHAR(128)           DEFAULT NULL COMMENT '跳转路径',
-    type          TINYINT                DEFAULT 0 NOT NULL COMMENT '菜单类型 0: 目录, 1: 菜单, 2: 按钮',
-    `order`       INT                    DEFAULT 0 COMMENT '菜单排序',
-    status        TINYINT       NOT NULL DEFAULT 1 COMMENT '菜单状态 0: 禁用, 1: 启用',
-    permission    VARCHAR(32)            DEFAULT NULL COMMENT '菜单权限',
-    icon_path     VARCHAR(128)           DEFAULT NULL COMMENT '菜单图标路径',
-    title         VARCHAR(64)            DEFAULT NULL COMMENT '菜单名称',
-    cacheable     TINYINT                DEFAULT 0 CHECK ( cacheable IN (0, 1) ) COMMENT '是否缓存, 0: 否, 1: 是',
-    hidden_header TINYINT                DEFAULT 0 CHECK ( hidden_header IN (0, 1) ) COMMENT '隐藏菜单栏, 0: 否, 1: 是',
-    target        VARCHAR(16)            DEFAULT NULL COMMENT 'html a标签target参数',
-    remark        VARCHAR(128)           DEFAULT NULL COMMENT '备注',
-    create_time   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time   TIMESTAMP              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    id              BIGINT        NOT NULL AUTO_INCREMENT COMMENT '角色id',
+    parent_id       BIGINT                 DEFAULT 0 COMMENT '父级菜单id, 0为顶级菜单',
+    name            VARBINARY(64) NOT NULL COMMENT '菜单唯一标识符',
+    url             VARCHAR(128)           DEFAULT NULL COMMENT '接口路径',
+    method          VARCHAR(8)             DEFAULT NULL COMMENT 'http请求方法, 与url共同组成支持restful请求',
+    path            VARCHAR(128)           DEFAULT NULL COMMENT '前端路径',
+    component       VARCHAR(128)           DEFAULT NULL COMMENT '菜单组件',
+    redirect        VARCHAR(128)           DEFAULT NULL COMMENT '跳转路径',
+    type            TINYINT                DEFAULT 0 NOT NULL COMMENT '菜单类型 0: 目录, 1: 菜单, 2: 按钮',
+    `order`         INT                    DEFAULT 0 COMMENT '菜单排序',
+    status          TINYINT       NOT NULL DEFAULT 1 COMMENT '菜单状态 0: 禁用, 1: 启用',
+    permission      VARCHAR(32)            DEFAULT NULL COMMENT '菜单权限',
+    icon_path       VARCHAR(128)           DEFAULT NULL COMMENT '菜单图标路径',
+    title           VARCHAR(64)            DEFAULT NULL COMMENT '菜单名称',
+    cacheable       TINYINT                DEFAULT 0 CHECK ( cacheable IN (0, 1) ) COMMENT '是否缓存, 0: 否, 1: 是',
+    hidden          TINYINT                DEFAULT 0 CHECK ( hidden IN (0, 1) ) COMMENT '是否隐藏菜单, 0: 否, 1: 是',
+    hidden_header   TINYINT                DEFAULT 0 CHECK ( hidden_header IN (0, 1) ) COMMENT '隐藏菜单栏, 0: 否, 1: 是',
+    hidden_children TINYINT                DEFAULT 0 CHECK ( hidden_children IN (0, 1) ) COMMENT '强制菜单显示为Item而不是SubItem(配合 meta.hidden), 0: 否, 1: 是',
+    target          VARCHAR(16)            DEFAULT NULL COMMENT 'html a标签target参数',
+    remark          VARCHAR(128)           DEFAULT NULL COMMENT '备注',
+    create_time     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     TIMESTAMP              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id),
-    UNIQUE KEY uk_name(name)
+    UNIQUE KEY uk_name (name)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci COMMENT '权限表';
 
 CREATE TABLE IF NOT EXISTS user_role_relations
@@ -98,7 +100,7 @@ CREATE TABLE IF NOT EXISTS role_menu_relations
     PRIMARY KEY (role_id, menu_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '角色菜单表关联';
 
-CREATE TABLE IF NOT EXISTS operation_histories
+CREATE TABLE IF NOT EXISTS operation_log
 (
     id BIGINT NOT NULL  AUTO_INCREMENT COMMENT '自增长id',
     user_id BIGINT NOT NULL COMMENT '用户id',
@@ -124,3 +126,29 @@ CREATE TABLE IF NOT EXISTS operation_histories
     PRIMARY KEY (id),
     INDEX (create_time, user_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci COMMENT '登录历史表';
+
+CREATE TABLE IF NOT EXISTS user_login_history
+(
+    id BIGINT NOT NULL  AUTO_INCREMENT COMMENT '自增长id',
+    user_id BIGINT NOT NULL COMMENT '用户id',
+    account VARCHAR(64) NOT NULL COMMENT '用户账号',
+    tenant_id   BIGINT NOT NULL COMMENT '租户id',
+    os VARCHAR(64) DEFAULT NULL COMMENT '操作系统',
+    os_version  VARCHAR(64) DEFAULT NULL COMMENT '操作系统版本号',
+    platform VARCHAR(64) DEFAULT NULL COMMENT '操作系统平台',
+    browser VARCHAR(64) DEFAULT NULL COMMENT '浏览器型号',
+    browser_version VARCHAR(64) DEFAULT NULL COMMENT '浏览器版本',
+    engine VARCHAR(64) DEFAULT NULL COMMENT '引擎型号',
+    engine_version VARCHAR(64) DEFAULT NULL COMMENT '引擎版本',
+    ip_addr VARCHAR(64) DEFAULT NULL COMMENT 'ip地址',
+    country VARCHAR(64) DEFAULT 'unknown' COMMENT '国家',
+    province VARCHAR(64) DEFAULT 'unknown' COMMENT '省份',
+    city    VARCHAR(64) DEFAULT 'unknown' COMMENT '城市',
+    isp     VARCHAR(64) DEFAULT NULL COMMENT '运营商',
+    is_mobile  TINYINT DEFAULT 0 COMMENT '是否移动平台, 0: desktop, 1: mobile',
+    login_status TINYINT NOT NULL DEFAULT 0 COMMENT '操作状态, 0: 登录, 1: 登出, 2: 续签',
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (id),
+    INDEX (create_time, tenant_id, user_id),
+    INDEX (tenant_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci COMMENT '用户登录表';

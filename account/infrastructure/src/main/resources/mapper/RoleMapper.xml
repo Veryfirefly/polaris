@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xsdq.polaris.account.impl.dao.RoleDao">
+
+    <resultMap id="RoleMapping" type="com.xsdq.polaris.account.impl.domain.po.RolePO">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARBINARY" />
+        <result column="entity" property="entity" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARBINARY" />
+        <result column="status" property="state" jdbcType="TINYINT" />
+        <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <collection columnPrefix="perm_" property="permissions" javaType="java.util.List" ofType="com.xsdq.polaris.account.impl.domain.po.MenuPO">
+            <id column="id" property="id" jdbcType="BIGINT" />
+            <result column="name" property="name" jdbcType="VARBINARY" />
+            <result column="type" property="type" jdbcType="TINYINT" />
+            <result column="url" property="url" jdbcType="VARBINARY" />
+            <result column="method" property="method" jdbcType="VARBINARY" />
+            <result column="status" property="state" jdbcType="TINYINT" />
+            <result column="permission" property="permission" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <select id="findRolesByUserId" resultMap="RoleMapping">
+        select
+            r.id,
+            r.name,
+            r.entity,
+            r.description,
+            r.status,
+            r.tenant_id,
+            r.create_by,
+            r.create_time,
+            r.update_by,
+            r.update_time,
+            m.id as perm_id,
+            m.name as perm_name,
+            m.type as perm_type,
+            m.url as perm_url,
+            m.method as perm_method,
+            m.status as perm_status,
+            m.permission as perm_permission
+        from user_role_relations ur
+        left join roles r on r.id = ur.role_id
+        left join role_menu_relations rm on r.id = rm.role_id
+        left join menus m on rm.menu_id = m.id
+        where ur.user_id = #{userId};
+    </select>
+
+</mapper>

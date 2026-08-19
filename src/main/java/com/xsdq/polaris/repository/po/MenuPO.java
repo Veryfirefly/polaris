@@ -36,7 +36,9 @@ public class MenuPO {
 	private String iconPath;
 	private String title;
 	private Boolean cacheable;
+	private Boolean hidden;
 	private Boolean hiddenHeader;
+	private Boolean hiddenChildren;
 	private String target;
 	private String remark;
 	private LocalDateTime createTime;
@@ -50,6 +52,18 @@ public class MenuPO {
 
 	public boolean isButton() {
 		return type == Type.BUTTON;
+	}
+
+	public boolean isDirOrMenu() {
+		return type == Type.DIRECTORY || type == Type.MENU;
+	}
+
+	public boolean isTopLevel() {
+		return parentId == 0;
+	}
+
+	public boolean enabled() {
+		return status == Status.ENABLED;
 	}
 
 	@Getter

@@ -58,9 +58,7 @@ class AuthControllerTest extends MockServletTestKit {
 	}
 
 	private String loginRequestBody() throws JsonProcessingException {
-		LoginRequest loginRequest = new LoginRequest();
-		loginRequest.setAccount("xiaoyu");
-		loginRequest.setPassword("123456");
+		LoginRequest loginRequest = new LoginRequest("xiaoyu", "123456");
 		return objectMapper.writeValueAsString(loginRequest);
 	}
 }

@@ -5,21 +5,21 @@ import NProgress from 'nprogress' // progress bar
 import '@/components/NProgress/nprogress.less' // progress bar custom style
 import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { AUTHENTICATION } from '@/store/mutation-types'
 import { i18nRender } from '@/locales'
-// import mockUserInfo from '@/store/modules/mock-user' // mock user info, please remove this line
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
-const loginRoutePath = '/user/login'
-const defaultRoutePath = '/dashboard/workplace'
+const loginRoutePath = '/user/login' // fixme loginRoutePath not match actual path.
+const defaultRoutePath = '/dashboard/workplace' // fixme same this
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
   /* has token */
-  if (storage.get(ACCESS_TOKEN)) {
+  const auth = storage.get(AUTHENTICATION)
+  if (auth && Object.keys(auth).length > 0) {
     if (to.path === loginRoutePath) {
       next({ path: defaultRoutePath })
       NProgress.done()
@@ -30,10 +30,8 @@ router.beforeEach((to, from, next) => {
         store
           .dispatch('GetInfo')
           .then(res => {
-            // TODO 数据格式要改
-            const roles = res.result && res.result.role
             // generate dynamic router
-            store.dispatch('GenerateRoutes', { roles }).then(() => {
+            store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
               router.addRoutes(store.getters.addRouters)

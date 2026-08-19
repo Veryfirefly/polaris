@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -34,10 +33,9 @@ public class DefaultAccessDeniedHandler implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException exception) throws IOException, ServletException {
-		log.warn("Access denied [{}]: '{} {}'.", Utils.getClientIpByHeader(request), request.getMethod(),
-				request.getRequestURI());
+		log.warn("Access to the resource '{} {}' has been prohibited for '{}:[{}]'",request.getMethod(),
+				request.getRequestURI(), AuthenticationUtils.currentUsername(), Utils.getClientIpByHeader(request));
 
-		new Response<Void>(HttpStatus.FORBIDDEN.value(), "您无权访问该资源!")
-				.writeToServletResponse(response, HttpStatus.FORBIDDEN, objectMapper);
+		Utils.writeBizResponse(response, Response.forbidden("您无权访问该资源!"), objectMapper);
 	}
 }

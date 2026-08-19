@@ -35,6 +35,7 @@ public class RolePO {
 
 	public List<Permission> permissions() {
 		return permissions.stream()
+				.filter(MenuPO::isButton)
 				.map(MenuPO::createPermission)
 				.toList();
 	}

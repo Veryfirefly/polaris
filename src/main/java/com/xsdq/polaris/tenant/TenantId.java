@@ -1,5 +1,9 @@
 package com.xsdq.polaris.tenant;
 
-@Deprecated
 public record TenantId(long id) {
+
+	public TenantId {
+		if (id < 0)
+			throw new IllegalArgumentException("Illegal tenant id.");
+	}
 }

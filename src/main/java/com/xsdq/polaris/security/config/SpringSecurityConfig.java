@@ -3,26 +3,24 @@ package com.xsdq.polaris.security.config;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xsdq.polaris.security.DynamicDecisionAuthorizationManager;
-import com.xsdq.polaris.security.JwtTokenAuthenticationFilter;
-import com.xsdq.polaris.security.JwtTokenService;
 import com.xsdq.polaris.security.DefaultAccessDeniedHandler;
 import com.xsdq.polaris.security.DefaultAuthenticationEntryPoint;
-import com.xsdq.polaris.security.DefaultAuthenticationSuccessHandler;
 import com.xsdq.polaris.security.DefaultLogoutSuccessHandler;
+import com.xsdq.polaris.security.DynamicDecisionAuthorizationManager;
+import com.xsdq.polaris.security.JwtTokenAuthenticationFilter;
+import com.xsdq.polaris.security.PolarisUserDetails;
 import com.xsdq.polaris.security.PolarisUserDetailsService;
+import com.xsdq.polaris.security.TokenManager;
 import com.xsdq.polaris.security.autoconfigure.PolarisSecurityProperties;
 import com.xsdq.polaris.service.MenuService;
 import com.xsdq.polaris.service.RoleService;
 import com.xsdq.polaris.service.TenantService;
 import com.xsdq.polaris.service.UserService;
+import com.xsdq.polaris.tenant.TenantFilter;
 
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -61,18 +59,13 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public JwtTokenAuthenticationFilter authenticationFilter(JwtTokenService tokenService) {
-        return new JwtTokenAuthenticationFilter(tokenService);
+    public JwtTokenAuthenticationFilter authenticationFilter(TokenManager<PolarisUserDetails> tokenManager) {
+        return new JwtTokenAuthenticationFilter(tokenManager);
     }
 
     @Bean
-    public ApplicationListener<AuthenticationSuccessEvent> authenticationSuccessEventHandler(ApplicationEventPublisher eventPublisher) {
-        return new DefaultAuthenticationSuccessHandler(eventPublisher);
-    }
-
-    @Bean
-    public LogoutSuccessHandler logoutSuccessHandler(JwtTokenService tokenService, ObjectMapper objectMapper) {
-        return new DefaultLogoutSuccessHandler(tokenService, objectMapper);
+    public LogoutSuccessHandler logoutSuccessHandler(TokenManager<PolarisUserDetails> tokenManager, ObjectMapper objectMapper) {
+        return new DefaultLogoutSuccessHandler(tokenManager, objectMapper);
     }
 
     @Bean
@@ -93,6 +86,11 @@ public class SpringSecurityConfig {
     @Bean
     public AuthorizationManager<RequestAuthorizationContext> dynamicDecisionAuthorizationManager(MenuService menuService) {
         return new DynamicDecisionAuthorizationManager(menuService);
+    }
+
+    @Bean
+    public TenantFilter tenantFilter() {
+        return new TenantFilter();
     }
 
     @Bean
@@ -118,6 +116,7 @@ public class SpringSecurityConfig {
                                 .logoutSuccessHandler(logoutSuccessHandler)
                                 .clearAuthentication(false))
                 .addFilterBefore(authenticationFilter, LogoutFilter.class)
+                .addFilterBefore(tenantFilter(), LogoutFilter.class)
                 .build();
     }
 

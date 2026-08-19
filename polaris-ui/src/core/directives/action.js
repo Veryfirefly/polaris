@@ -20,6 +20,7 @@ const action = Vue.directive('action', {
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
     const permissionId = elVal instanceof String && [elVal] || elVal
+    // todo 若要使用v-action="'sys:admin:add'" 要修改此处
     roles.permissions.forEach(p => {
       if (!permissionId.includes(p.permissionId)) {
         return

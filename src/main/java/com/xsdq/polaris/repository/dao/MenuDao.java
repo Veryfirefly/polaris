@@ -13,4 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MenuDao extends BaseMapper<MenuPO> {
 
+	List<MenuPO> findMenusByRoleId(List<Long> list);
 }

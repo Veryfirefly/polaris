@@ -1,6 +1,12 @@
 package com.xsdq.polaris.util;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsdq.polaris.error.PolarisRuntimeException;
+import com.xsdq.polaris.http.useragent.UserAgent;
+import com.xsdq.polaris.http.useragent.UserAgentParser;
+import com.xsdq.polaris.repository.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -43,6 +49,23 @@ public final class Utils {
 		return multistageReverseProxyIp(request.getRemoteAddr());
 	}
 
+	public static String currentClientIp() {
+		return getClientIpByHeader(getRequest());
+	}
+
+	public static UserAgent getCurrentUserAgent() {
+		return UserAgentParser.parse(getRequest());
+	}
+
+	public static <T> void writeBizResponse(HttpServletResponse response, Response<T> bizResponse, ObjectMapper objectMapper)
+			throws IOException {
+		response.setContentType("application/json");
+		response.setStatus(bizResponse.status());
+		response.setCharacterEncoding("UTF-8");
+
+		objectMapper.writeValue(response.getWriter(), bizResponse);
+	}
+
 	private static boolean isUnknown(String str) {
 		return !StringUtils.hasText(str) || "unknown".equalsIgnoreCase(str);
 	}
@@ -56,5 +79,27 @@ public final class Utils {
 			}
 		}
 		return ip;
+	}
+
+	public static boolean isInnerIp(String ip) {
+		if ("127.0.0.1".equals(ip) || "localhost".equals(ip))
+			return true;
+
+		String[] segments = ip.split("\\.");
+
+		if (segments.length != 4)
+			return true;
+
+		int a = Integer.parseInt(segments[0]);
+		int b = Integer.parseInt(segments[1]);
+
+		if (a == 10)
+			return true;
+		else if (a == 192 && b == 168)
+			return true;
+		else if (a == 172 && b >= 16 && b <= 31)
+			return true;
+		else
+			return false;
 	}
 }

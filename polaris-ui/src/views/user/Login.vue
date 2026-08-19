@@ -14,14 +14,21 @@
       >
         <!-- 账号密码登录 -->
         <a-tab-pane key="tab1" tab="账号密码登录">
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误" />
+          <a-alert
+            v-if="isLoginError"
+            type="error"
+            showIcon
+            style="margin-bottom: 24px;"
+            :message="errorMessage"
+            closable
+            :after-close="resetAlert"/>
           <a-form-item>
             <a-input
               size="large"
               type="text"
               placeholder="请输入账户名"
               v-decorator="[
-                'username',
+                'account',
                 {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
               ]"
             >
@@ -100,7 +107,6 @@
 </template>
 
 <script>
-// import md5 from 'md5'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha } from '@/api/login'
@@ -123,7 +129,8 @@ export default {
         // login type: 0 email, 1 username, 2 telephone
         loginType: 0,
         smsSendBtn: false
-      }
+      },
+      errorMessage: ''
     }
   },
   created () {
@@ -157,13 +164,13 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['account', 'password'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          delete loginParams.account
+          loginParams[!state.loginType ? 'email' : 'account'] = values.account
           // loginParams.password = md5(values.password)
           loginParams.password = values.password
           Login(loginParams)
@@ -214,7 +221,6 @@ export default {
       })
     },
     loginSuccess (res) {
-      // TODO 跳转失败 GetInfo
       this.$router.push({ path: '/' })
 
       this.$notification['success']({
@@ -225,13 +231,12 @@ export default {
       this.isLoginError = false
     },
     requestFailed (err) {
+      debugger
       this.isLoginError = true
-
-      this.$notification['error']({
-        message: '错误',
-        description: err.message || '请求出现错误，请稍后再试',
-        duration: 4
-      })
+      this.errorMessage = err.message
+    },
+    resetAlert () {
+      this.isLoginError = false
     }
   }
 }

@@ -1,22 +1,20 @@
 import storage from 'store'
 import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { AUTHENTICATION } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
   state: {
-    token: '',
+    authentication: {},
     name: '',
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    tenantId: ''
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token
-    },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
       state.welcome = welcome
@@ -29,6 +27,9 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_AUTHENTICATION: (state, authentication) => {
+      state.authentication = authentication
     }
   },
 
@@ -37,14 +38,17 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const { message, data } = response
-          // TODO 定义BulkError code标识符
-          if (!data && message) {
-            reject(response)
+          const { status, data, message } = response
+          if (status === 200 && data) {
+            const { token, timeToLiveMs, tenantId } = data
+
+            const authentication = { token, tenantId }
+            storage.set(AUTHENTICATION, authentication, timeToLiveMs)
+            commit('SET_AUTHENTICATION', authentication)
+
+            resolve()
           } else {
-            storage.set(ACCESS_TOKEN, data.token)
-            commit('SET_TOKEN', data.token)
-            resolve(response)
+            reject(new Error(message))
           }
         }).catch(error => {
           reject(error)
@@ -56,26 +60,20 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const data = response.data
-          if (data.roles) {
-            const roles = data.roles
-            // 用于action.js控制菜单是否有权限显示
-            roles.map(role => {
-              if (role.permissions != null && role.permissions.length > 0) {
-                role.actionList = role.permissions.map(perm => { return perm.entity })
-              }
-            })
-            // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', roles)
+          const { status, data, message } = response
+
+          if (status === 200 && data && data.permissions) {
+            commit('SET_ROLES', data.permissions)
             commit('SET_INFO', data)
+
+            commit('SET_NAME', { name: data.nickname, welcome: welcome() })
+            commit('SET_AVATAR', data.avatar)
+
+            resolve(response)
           } else {
-            reject(new Error('getInfo: roles must be a non-null array !'))
+            reject(new Error(message))
           }
-
-          commit('SET_NAME', { name: data.name, welcome: welcome() })
-          commit('SET_AVATAR', data.avatar)
-
-          resolve(response)
+          // reject(new Error('getInfo: roles must be a non-null array !'))
         }).catch(error => {
           reject(error)
         })
@@ -90,9 +88,13 @@ const user = {
         }).catch(() => {
           resolve()
         }).finally(() => {
-          commit('SET_TOKEN', '')
+          commit('SET_AUTHENTICATION', {})
           commit('SET_ROLES', [])
-          storage.remove(ACCESS_TOKEN)
+          commit('SET_ROUTERS', [])
+          commit('SET_INFO', {})
+          commit('SET_NAME', '')
+          commit('SET_AVATAR', '')
+          storage.remove(AUTHENTICATION)
         })
       })
     }

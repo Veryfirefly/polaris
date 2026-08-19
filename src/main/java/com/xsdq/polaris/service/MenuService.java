@@ -3,6 +3,7 @@ package com.xsdq.polaris.service;
 import java.util.List;
 
 import com.xsdq.polaris.repository.Permission;
+import com.xsdq.polaris.repository.vo.MenuRouter;
 
 /**
  *
@@ -12,4 +13,6 @@ import com.xsdq.polaris.repository.Permission;
 public interface MenuService {
 
 	List<Permission> listPermissions();
+
+	List<MenuRouter> findMenuRouters(List<Long> list);
 }

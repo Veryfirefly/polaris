@@ -1,7 +1,9 @@
 package com.xsdq.polaris.repository;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import lombok.Getter;
 
+@Getter
 public enum Status {
     DISABLED((short) 0),
     ENABLED((short) 1);
@@ -11,9 +13,5 @@ public enum Status {
 
     Status(short val) {
         this.val = val;
-    }
-
-    public short getVal() {
-        return val;
     }
 }

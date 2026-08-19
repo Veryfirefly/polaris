@@ -20,7 +20,9 @@
         <result column="icon_path" property="iconPath" jdbcType="VARCHAR" />
         <result column="title" property="title" jdbcType="VARCHAR" />
         <result column="cacheable" property="cacheable" jdbcType="TINYINT" />
+        <result column="hidden" property="hidden" jdbcType="TINYINT" />
         <result column="hidden_header" property="hiddenHeader" jdbcType="TINYINT" />
+        <result column="hidden_children" property="hiddenChildren" jdbcType="TINYINT" />
         <result column="target" property="target" jdbcType="VARCHAR" />
         <result column="remark" property="remark" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -28,8 +30,19 @@
     </resultMap>
 
     <sql id="QueryFullColumn">
-        id, parent_id, name, url, method, path, component, redirect, type, order, status, permission, icon_path, title,
-        cacheable, hidden_header, target, remark, create_time, update_time
+        m.id, m.parent_id, m.name, m.url, m.method, m.path, m.component, m.redirect, m.type, m.order, m.status,
+        m.permission, m.icon_path, m.title, m.cacheable, m.hidden, m.hidden_header, m.hidden_children, m.target, m.remark,
+        m.create_time, m.update_time
     </sql>
+
+	<select id="findMenusByRoleId" resultMap="MenuMapping">
+        select <include refid="QueryFullColumn" />
+        from menus m
+        inner join role_menu_relations rm on m.id = rm.menu_id
+        where rm.role_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

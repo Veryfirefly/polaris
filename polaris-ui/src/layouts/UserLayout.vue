@@ -5,7 +5,7 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Bulk 管理系统</span>
+            <span class="title">Polaris管理系统</span>
           </a>
         </div>
       </div>

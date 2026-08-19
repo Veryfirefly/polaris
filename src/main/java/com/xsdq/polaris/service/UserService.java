@@ -1,7 +1,10 @@
 package com.xsdq.polaris.service;
 
+import java.util.List;
+
 import com.xsdq.polaris.repository.po.UserPO;
 import com.xsdq.polaris.repository.vo.LoginRequest;
+import com.xsdq.polaris.tenant.TenantId;
 
 /**
  *
@@ -10,9 +13,7 @@ import com.xsdq.polaris.repository.vo.LoginRequest;
  */
 public interface UserService {
 
-	// todo maybe we don't need the method
-	@Deprecated
-	String login(LoginRequest request);
-
 	UserPO getUserByAccount(String account);
+
+	List<UserPO> listUsers(TenantId tenantId);
 }

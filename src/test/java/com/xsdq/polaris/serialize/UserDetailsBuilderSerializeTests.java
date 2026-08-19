@@ -2,13 +2,16 @@ package com.xsdq.polaris.serialize;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xsdq.polaris.http.useragent.UserAgentParser;
+import com.xsdq.polaris.repository.Status;
 import com.xsdq.polaris.repository.dao.UserMockDataTestKit;
+import com.xsdq.polaris.repository.po.TenantPO;
 import com.xsdq.polaris.security.PolarisUserDetails;
 import com.xsdq.polaris.servlet.MockServletTestKit;
 import com.xsdq.polaris.util.Utils;
@@ -29,7 +32,6 @@ import static org.hamcrest.Matchers.startsWith;
 class UserDetailsBuilderSerializeTests extends MockServletTestKit implements UserMockDataTestKit {
 
 	private final Duration expireDuration = Duration.ofHours(1);
-	private final Duration refreshWindowTimeDuration = Duration.ofMinutes(30);
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -37,12 +39,11 @@ class UserDetailsBuilderSerializeTests extends MockServletTestKit implements Use
 	@Test
 	void serializeToJsonPolarisUserDetailsBuilder() throws JsonProcessingException {
 		PolarisUserDetails userDetails = new PolarisUserDetails.Builder()
-				.enabledTenant(true)
 				.user(createMockUser(1L))
 				.userAgent(() -> UserAgentParser.parse(request))
 				.ipAddress(Utils.getClientIpByHeader(request))
 				.loginTimeMs(Instant.now().toEpochMilli())
-				.calculateExpireTime(expireDuration)
+				.expireTimeMs(expireDuration)
 				.authorities(mockAuthorities())
 				.build();
 
@@ -56,8 +57,21 @@ class UserDetailsBuilderSerializeTests extends MockServletTestKit implements Use
 		assertThat(deserializeBean, equalTo(userDetails));
 	}
 
-	private Set<GrantedAuthority> mockAuthorities() {
-		Set<GrantedAuthority> authorities = new HashSet<>();
+	private TenantPO mockTenant() {
+		TenantPO tenant = new TenantPO();
+		tenant.setId(1L);
+		tenant.setName("Mock tenant");
+		tenant.setStatus(Status.ENABLED);
+		tenant.setContactInfo("Mock contact info");
+		tenant.setDescription("Mock description");
+		tenant.setAddress("Mock address");
+		tenant.setCreateTime(LocalDateTime.now());
+		tenant.setUpdateTime(LocalDateTime.now());
+		return tenant;
+	}
+
+	private List<GrantedAuthority> mockAuthorities() {
+		List<GrantedAuthority> authorities = new ArrayList<>();
 
 		TestGrantedAuthority adminAuthority = new TestGrantedAuthority();
 		adminAuthority.setAuthority("ROLE_ADMIN");

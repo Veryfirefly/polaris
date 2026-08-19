@@ -1,18 +1,12 @@
 package com.xsdq.polaris.service.impl;
 
+import java.util.List;
+
 import com.xsdq.polaris.repository.dao.UserDao;
 import com.xsdq.polaris.repository.po.UserPO;
-import com.xsdq.polaris.repository.vo.LoginRequest;
-import com.xsdq.polaris.security.JwtTokenService;
-import com.xsdq.polaris.security.PolarisUserDetails;
 import com.xsdq.polaris.service.UserService;
+import com.xsdq.polaris.tenant.TenantId;
 
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,33 +18,18 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
 	private final UserDao userDao;
-	private final AuthenticationManager authenticationManager;
-	private final JwtTokenService tokenService;
 
-	private ApplicationEventPublisher eventPublisher;
-
-	public UserServiceImpl(
-			UserDao userDao,
-			@Lazy AuthenticationManager authenticationManager,
-			JwtTokenService tokenService) {
+	public UserServiceImpl(UserDao userDao) {
 		this.userDao = userDao;
-		this.authenticationManager = authenticationManager;
-		this.tokenService = tokenService;
-	}
-
-	@Override
-	public String login(LoginRequest request) {
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-				request.getAccount(), request.getPassword());
-		Authentication authentication = authenticationManager.authenticate(token);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		PolarisUserDetails userDetails = (PolarisUserDetails) authentication.getPrincipal();
-
-		return tokenService.createToken(userDetails);
 	}
 
 	@Override
 	public UserPO getUserByAccount(String account) {
 		return userDao.findByAccount(account);
+	}
+
+	@Override
+	public List<UserPO> listUsers(TenantId tenantId) {
+		return userDao.findUsersByTenantId(tenantId.id());
 	}
 }

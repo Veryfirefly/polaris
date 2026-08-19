@@ -1,24 +1,27 @@
 package com.xsdq.polaris.security;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xsdq.polaris.bean.LoginStatus;
+import com.xsdq.polaris.bean.event.LoginHistoryEvent;
 import com.xsdq.polaris.repository.Response;
+import com.xsdq.polaris.util.ApplicationUtils;
+import com.xsdq.polaris.util.Utils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import java.io.IOException;
-
 public class DefaultLogoutSuccessHandler implements LogoutSuccessHandler {
 
-    private final JwtTokenService tokenService;
+    private final TokenManager<PolarisUserDetails> tokenManager;
     private final ObjectMapper objectMapper;
 
-	public DefaultLogoutSuccessHandler(JwtTokenService tokenService, ObjectMapper objectMapper) {
-		this.tokenService = tokenService;
+	public DefaultLogoutSuccessHandler(TokenManager<PolarisUserDetails> tokenManager, ObjectMapper objectMapper) {
+		this.tokenManager = tokenManager;
 		this.objectMapper = objectMapper;
 	}
 
@@ -27,10 +30,17 @@ public class DefaultLogoutSuccessHandler implements LogoutSuccessHandler {
             throws IOException, ServletException {
         if (authentication != null) {
             PolarisUserDetails userDetails = (PolarisUserDetails) authentication.getPrincipal();
-            tokenService.removeUserDetails(userDetails);
+            tokenManager.removeUserDetails(userDetails);
+
+			ApplicationUtils.publishEvent(
+					new LoginHistoryEvent(
+							userDetails,
+							LoginStatus.LOGGED_OUT,
+							Utils.getClientIpByHeader(request)
+					)
+			);
         }
 
-        new Response<Void>(HttpStatus.OK.value(), "退出成功")
-                .writeToServletResponse(response, HttpStatus.OK, objectMapper);
+		Utils.writeBizResponse(response, Response.ok("退出成功"), objectMapper);
     }
 }

@@ -65,20 +65,45 @@ const notFoundRouter = {
   path: '*', redirect: '/404', hidden: true
 }
 
+const rootRouter = {
+  path: '/',
+  name: 'index',
+  component: BasicLayout,
+  meta: { title: 'menu.home' },
+  redirect: '',
+  children: [
+  ]
+}
+
 /**
  * 动态生成菜单
  * @param token
  * @returns {Promise<Router>}
  */
-export const generatorDynamicRouter = (token) => {
+export const generatorDynamicRouter = () => {
   return new Promise((resolve, reject) => {
-    loginService.getCurrentUserNav(token).then(response => {
-      const { data } = response
-      const menuNav = []
-      listToTree(data, menuNav, 0)
-      const routers = generator(menuNav)
-      routers.push(notFoundRouter)
-      resolve(routers)
+    loginService.getCurrentUserNav().then(response => {
+      const { status, data, message } = response
+
+      if (status === 200 && data) {
+        const [ ...dbRouters ] = data
+        const routers = generator(dbRouters)
+        const dynamicRouterMap = []
+
+        if (rootRouter.children.length > 0) {
+          rootRouter.children = []
+        }
+
+        rootRouter.children.push(...routers)
+        rootRouter.redirect = (routers && routers[0]) && routers[0].redirect
+
+        dynamicRouterMap.push(rootRouter)
+        dynamicRouterMap.push(notFoundRouter)
+
+        resolve(dynamicRouterMap)
+      } else {
+        reject(new Error(message))
+      }
     }).catch(err => {
       reject(err)
     })
@@ -94,34 +119,30 @@ export const generatorDynamicRouter = (token) => {
  */
 export const generator = (routerMap, parent) => {
   return routerMap.map(item => {
-    const { title, show, hideChildren, hiddenHeader, target, icon } = item.metadata || {}
+    const { title, hidden, hiddenHeaderContent, keepAlive, target, icon } = item.metadata || {}
     const currentRouter = {
-      // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
       path: item.path || `${parent && parent.path || ''}/${item.name}`,
-      // 路由名称(路由的名称)，建议唯一
-      name: item.name || '',
-      // 该路由对应页面的 组件 :方案1
-      // component: constantRouterComponents[item.component || item.key],
-      // 该路由对应页面的 组件 :方案2 (动态加载)
-      component: (constantRouterComponents[item.component]) || (() => import(`@/views/${item.component}`)),
-
+      name: item.name,
+      // component: ((item.component === null || item.component === '') && RouteView) || (constantRouterComponents[item.component]) || (() => import(`@/views/${item.component}`)),
+      hidden: hidden,
+      hiddenChildrenInMenu: item.hiddenChildrenInMenu, // 这个要处理一下
       // meta: 页面标题, 菜单图标, 页面权限(供指令权限用，可去掉)
       meta: {
         title: title,
         icon: icon || undefined,
-        hiddenHeaderContent: hiddenHeader,
+        hiddenHeaderContent: hiddenHeaderContent,
         target: target,
-        permission: item.permission
+        keepAlive: keepAlive,
+        permission: item.metadata.permission
       }
     }
-    // 是否设置了隐藏菜单
-    if (show === false) {
-      currentRouter.hidden = true
+
+    if (item.component === null || item.component === '') {
+      currentRouter.component = RouteView
+    } else {
+      currentRouter.component = (constantRouterComponents[item.component]) || (() => import(`@/views/${item.component}`))
     }
-    // 是否设置了隐藏子菜单
-    if (hideChildren) {
-      currentRouter.hideChildrenInMenu = true
-    }
+
     // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
     if (!currentRouter.path.startsWith('http')) {
       currentRouter.path = currentRouter.path.replace('//', '/')
@@ -134,32 +155,5 @@ export const generator = (routerMap, parent) => {
       currentRouter.children = generator(item.children, currentRouter)
     }
     return currentRouter
-  })
-}
-
-/**
- * 数组转树形结构
- * @param list 源数组
- * @param tree 树
- * @param parentId 父ID
- */
-const listToTree = (list, tree, parentId) => {
-  list.forEach(item => {
-    // 判断是否为父级菜单
-    if (item.parentId === parentId) {
-      const child = {
-        ...item,
-        key: item.key || item.name,
-        children: []
-      }
-      // 迭代 list， 找到当前菜单相符合的所有子菜单
-      listToTree(list, child.children, item.id)
-      // 删掉不存在 children 值的属性
-      if (child.children.length <= 0) {
-        delete child.children
-      }
-      // 加入到树中
-      tree.push(child)
-    }
   })
 }

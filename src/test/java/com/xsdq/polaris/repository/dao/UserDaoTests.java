@@ -2,6 +2,7 @@ package com.xsdq.polaris.repository.dao;
 
 import java.io.Serializable;
 
+import com.xsdq.polaris.tenant.TenantId;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -51,6 +53,15 @@ class UserDaoTests implements UserMockDataTestKit {
 		var user = userDao.findByAccount("xiaoyu");
 		assertAll(
 				() -> assertNotNull(user)
+		);
+	}
+
+	@Test
+	void testFindUsersByTenantId() {
+		var tenantId = new TenantId(2003729131754622977L);
+		var users = assertDoesNotThrow(() -> userDao.findUsersByTenantId(tenantId.id()));
+		assertAll(
+				() -> assertNotNull(users)
 		);
 	}
 

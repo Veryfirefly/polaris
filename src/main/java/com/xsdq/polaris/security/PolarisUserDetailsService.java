@@ -1,12 +1,10 @@
 package com.xsdq.polaris.security;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import com.xsdq.polaris.error.PolarisRuntimeException;
-import com.xsdq.polaris.http.useragent.UserAgentParser;
+import com.xsdq.polaris.error.TenantException;
 import com.xsdq.polaris.repository.Permission;
 import com.xsdq.polaris.repository.po.RolePO;
 import com.xsdq.polaris.repository.po.TenantPO;
@@ -46,17 +44,23 @@ public class PolarisUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserPO user = userService.getUserByAccount(username);
-        if (user == null)
-            throw new UsernameNotFoundException("用户不存在");
+        if (user == null) {
+            // This exception is never thrown because the parameter hideUserNotFoundExceptions is set to true
+            // in AbstractUserDetailsAuthenticationProvider.
+            throw new UsernameNotFoundException("当前用户不存在");
+        }
 
         TenantPO tenant = tenantService.getTenantById(user.getTenantId());
         if (tenant == null) {
-            log.error("{}的租户id不存在, 租户id: {}", username, user.getTenantId());
-            throw new PolarisRuntimeException("租户不存在");
+            log.error("该用户'{}'所属的租户'{}'不存在, 或已删除.", username, user.getTenantId());
+            throw new TenantException("当前租户不存在");
         }
 
+        if (!tenant.enabled())
+            throw new TenantException("该用户所属的租户已冻结.");
+
         List<RolePO> roles = roleService.getRolesByUserId(user.getId());
-        Set<GrantedAuthority> authorities = new HashSet<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         for (RolePO role : roles) {
             if (!role.enable()) {
                 log.trace("The user '{}' has had the '{}' role permission disabled.", username, role.getEntity());
@@ -66,17 +70,15 @@ public class PolarisUserDetailsService implements UserDetailsService {
             for (Permission permission : role.permissions()) {
                 authorities.add(permission.authority());
             }
-            // Use the default role-based voter style because we don't need to write annotations.
-            // todo an error occurred while jackson deserialization
-//            authorities.add(role.authority());
         }
 
         return new PolarisUserDetails.Builder()
-                .enabledTenant(tenant.enabled())
                 .user(user)
-                .userAgent(() -> UserAgentParser.parse(Utils.getRequest()))
+                .roles(roles.stream().map(RolePO::getId).toList())
+                .userAgent(Utils::getCurrentUserAgent)
+                .ipAddress(Utils.currentClientIp())
                 .loginTimeMs(Instant.now().toEpochMilli())
-                .calculateExpireTime(securityProperties.getToken().getExpireDuration())
+                .expireTimeMs(securityProperties.getToken().getTimeToLive())
                 .authorities(authorities)
                 .build();
     }

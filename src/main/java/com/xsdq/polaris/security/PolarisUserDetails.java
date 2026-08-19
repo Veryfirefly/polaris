@@ -1,13 +1,14 @@
 package com.xsdq.polaris.security;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xsdq.polaris.bean.LoginDevice;
+import com.xsdq.polaris.cache.Cacheable;
 import com.xsdq.polaris.http.useragent.UserAgent;
 import com.xsdq.polaris.repository.Status;
 import com.xsdq.polaris.repository.po.UserPO;
@@ -16,27 +17,34 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
-public class PolarisUserDetails implements UserDetails, Serializable {
+import static com.xsdq.polaris.constant.PolarisConstant.EMPTY_STR;
 
-    private boolean enabledTenant;
+@Data
+public class PolarisUserDetails implements UserDetails, Cacheable {
+
     private UserPO user;
+    private List<Long> roles;
     private String identifier;
     private String token;
-    private String os;
-    private String osVersion;
-    private String engine;
-    private String engineVersion;
-    private String browser;
-    private String browserVersion;
-    private String platform;
+    private LoginDevice device;
     private String ipAddress;
     private long loginTimeMs;
     private long expireTimeMs;
-    private Set<GrantedAuthority> authorities;
+    private List<GrantedAuthority> authorities; // 我在想要不然就不存，
 
 	@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        /*
+            RoleService roleService = ApplicationUtils.getBean(RoleService.class);
+            List<RolePO> roles = roleService.getById(new Long[] { 1, 2, 3, 4 }); 对其缓存
+            List<GrantedAuthority> authorities = new ArrayList();
+            for (RolePO role : roles) {
+                if (role.disable()) continue;
+
+                authorities.add(role.toGrantedAuthority());
+                authorities.add(role.permissions().toGrantedAuthority());
+            }
+         */
         return authorities;
     }
 
@@ -55,7 +63,7 @@ public class PolarisUserDetails implements UserDetails, Serializable {
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return isEnabledTenant();
+        return true;
     }
 
     @JsonIgnore
@@ -85,52 +93,42 @@ public class PolarisUserDetails implements UserDetails, Serializable {
     }
 
     @JsonIgnore
-    public boolean isExpiration(Duration refreshWindowDuration) {
-        // (expire time - now) <= refresh window duration
-        return (expireTimeMs - Instant.now().toEpochMilli()) <= refreshWindowDuration.toMillis();
+    public boolean canRenewal(Duration timeToRefresh) {
+        Instant now = Instant.now();
+        Instant expireInstant = Instant.ofEpochMilli(expireTimeMs);
+        Duration absDiff = Duration.between(now, expireInstant).abs();
+        return absDiff.compareTo(timeToRefresh) <= 0;
+    }
+
+    public void renewal(Duration timeToLive) {
+        Instant newExpireTime = Instant.now().plus(timeToLive);
+        setExpireTimeMs(newExpireTime.toEpochMilli());
     }
 
     public static class Builder {
 
-        private static final String EMPTY_STR = "";
-
-        private boolean enabledTenant;
         private UserPO user;
-        private String os = EMPTY_STR;
-        private String osVersion = EMPTY_STR;
-        private String engine = EMPTY_STR;
-        private String engineVersion = EMPTY_STR;
-        private String browser = EMPTY_STR;
-        private String browserVersion = EMPTY_STR;
-        private String platform = EMPTY_STR;
+        private List<Long> roles;
+        private LoginDevice device;
         private String ipAddress = EMPTY_STR;
         private long loginTimeMs;
         private long expireTimeMs;
-        private Set<GrantedAuthority> authorities;
+        private List<GrantedAuthority> authorities;
 
         public Builder() {}
-
-        public Builder enabledTenant(boolean enabledTenant) {
-            this.enabledTenant = enabledTenant;
-            return this;
-        }
 
         public Builder user(UserPO user) {
             this.user = user;
             return this;
         }
 
+        public Builder roles(List<Long> roles) {
+            this.roles = roles;
+            return this;
+        }
+
         public Builder userAgent(Supplier<UserAgent> func) {
-            UserAgent userAgent = func.get();
-            if (userAgent != null) {
-                this.os = userAgent.getOs().getName();
-                this.osVersion = userAgent.getOsVersion();
-                this.engine = userAgent.getEngine().getName();
-                this.engineVersion = userAgent.getEngineVersion();
-                this.browser = userAgent.getBrowser().getName();
-                this.browserVersion = userAgent.getVersion();
-                this.platform = userAgent.getPlatform().getName();
-            }
+            this.device = LoginDevice.create(func.get());
             return this;
         }
 
@@ -139,36 +137,26 @@ public class PolarisUserDetails implements UserDetails, Serializable {
             return this;
         }
 
-        public  Builder loginTimeMs(long loginTimeMs) {
+        public Builder loginTimeMs(long loginTimeMs) {
             this.loginTimeMs = loginTimeMs;
             return this;
         }
 
-        public Builder calculateExpireTime(Duration duration) {
-            return expireTimeMs(loginTimeMs + duration.toMillis());
-        }
-
-        public Builder expireTimeMs(long expireTimeMs) {
-            this.expireTimeMs = expireTimeMs;
+        public Builder expireTimeMs(Duration duration) {
+            this.expireTimeMs = duration.plusMillis(loginTimeMs).toMillis();
             return this;
         }
 
-        public Builder authorities(Set<GrantedAuthority> authorities) {
+        public Builder authorities(List<GrantedAuthority> authorities) {
             this.authorities = authorities;
             return this;
         }
 
         public PolarisUserDetails build() {
             PolarisUserDetails userDetails = new PolarisUserDetails();
-            userDetails.setEnabledTenant(enabledTenant);
             userDetails.setUser(user);
-            userDetails.setOs(os);
-            userDetails.setOsVersion(osVersion);
-            userDetails.setBrowser(browser);
-            userDetails.setBrowserVersion(browserVersion);
-            userDetails.setEngine(engine);
-            userDetails.setEngineVersion(engineVersion);
-            userDetails.setPlatform(platform);
+            userDetails.setRoles(roles);
+            userDetails.setDevice(device);
             userDetails.setIpAddress(ipAddress);
             userDetails.setLoginTimeMs(loginTimeMs);
             userDetails.setExpireTimeMs(expireTimeMs);
