@@ -1,16 +1,14 @@
 package com.xsdq.polaris.security;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsdq.polaris.repository.Response;
 import com.xsdq.polaris.util.Utils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -22,20 +20,25 @@ import org.springframework.security.web.access.AccessDeniedHandler;
  */
 public class DefaultAccessDeniedHandler implements AccessDeniedHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(DefaultAccessDeniedHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultAccessDeniedHandler.class);
 
-	private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-	public DefaultAccessDeniedHandler(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
+  public DefaultAccessDeniedHandler(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
-	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response,
-			AccessDeniedException exception) throws IOException, ServletException {
-		log.warn("Access to the resource '{} {}' has been prohibited for '{}:[{}]'",request.getMethod(),
-				request.getRequestURI(), AuthenticationUtils.currentUsername(), Utils.getClientIpByHeader(request));
+  @Override
+  public void handle(
+      HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception)
+      throws IOException, ServletException {
+    log.warn(
+        "Access to the resource '{} {}' has been prohibited for '{}:[{}]'",
+        request.getMethod(),
+        request.getRequestURI(),
+        AuthenticationUtils.currentUsername(),
+        Utils.getClientIpByHeader(request));
 
-		Utils.writeBizResponse(response, Response.forbidden("您无权访问该资源!"), objectMapper);
-	}
+    Utils.writeBizResponse(response, Response.forbidden("您无权访问该资源!"), objectMapper);
+  }
 }

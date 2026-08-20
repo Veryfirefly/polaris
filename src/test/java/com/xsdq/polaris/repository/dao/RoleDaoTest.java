@@ -1,24 +1,21 @@
 package com.xsdq.polaris.repository.dao;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.xsdq.polaris.repository.po.RolePO;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RoleDaoTest {
 
-	@Autowired
-	private RoleDao roleDao;
+  @Autowired private RoleDao roleDao;
 
-	@Test
-	void testFindRolesByUserId() {
-		List<RolePO> roles = roleDao.findRolesByUserId(1L);
-		assertAll(() -> assertNotNull(roles));
-	}
+  @Test
+  void testFindRolesByUserId() {
+    List<RolePO> roles = roleDao.findRolesByUserId(1L);
+    assertAll(() -> assertNotNull(roles));
+  }
 }

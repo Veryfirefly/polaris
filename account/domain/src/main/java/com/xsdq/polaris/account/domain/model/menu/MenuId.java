@@ -1,13 +1,13 @@
-package com.xsdq.polaris.account.domain.model.resource;
+package com.xsdq.polaris.account.domain.model.menu;
 
 import java.util.Objects;
 
-public record ResourceId(long id) {
+public record MenuId(long id) {
 
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    ResourceId that = (ResourceId) o;
+    MenuId that = (MenuId) o;
     return id == that.id;
   }
 
@@ -16,7 +16,7 @@ public record ResourceId(long id) {
     return Objects.hashCode(id);
   }
 
-  public static ResourceId of(long id) {
-    return new ResourceId(id);
+  public static MenuId of(long id) {
+    return new MenuId(id);
   }
 }

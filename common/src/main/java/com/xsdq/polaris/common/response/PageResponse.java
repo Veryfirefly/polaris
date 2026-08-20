@@ -8,26 +8,26 @@ package com.xsdq.polaris.common.response;
  */
 public class PageResponse<T> extends Response<T> {
 
-	private final int page;
-	private final int size;
-	private final int total;
+  private final int page;
+  private final int size;
+  private final int total;
 
-	public PageResponse(int page, int size, int total, int status, T data, String message) {
-		this.page = page;
-		this.size = size;
-		this.total = total;
-		super(status, data, message);
-	}
+  public PageResponse(int page, int size, int total, int status, T data, String message) {
+    this.page = page;
+    this.size = size;
+    this.total = total;
+    super(status, data, message);
+  }
 
-	public int getPage() {
-		return page;
-	}
+  public int getPage() {
+    return page;
+  }
 
-	public int getSize() {
-		return size;
-	}
+  public int getSize() {
+    return size;
+  }
 
-	public int getTotal() {
-		return total;
-	}
+  public int getTotal() {
+    return total;
+  }
 }

@@ -1,104 +1,104 @@
 package com.xsdq.polaris.account.domain.model.role;
 
+import com.xsdq.polaris.account.domain.model.BaseEntity;
 import java.time.LocalDateTime;
 
-import com.xsdq.polaris.account.domain.model.BaseEntity;
-
 /**
- *
  * @author XiaoYu
  * @since 2026/8/11 15:47
  */
 public class Permission extends BaseEntity {
 
-	private final PermissionId id;
-	private String name;
-	private final PermissionCode code;
-	private String description;
-	private PermissionStatus status;
+  private final PermissionId id;
+  private String name;
+  private final PermissionCode code;
+  private String description;
+  private PermissionStatus status;
 
-	Permission(PermissionId id,
-			String name,
-			PermissionCode code,
-			String description,
-			PermissionStatus status,
-			LocalDateTime createTime,
-			LocalDateTime updateTime) {
-		this.id = id;
-		this.name = name;
-		this.code = code;
-		this.description = description;
-		this.status = status;
-		super(createTime, updateTime);
-	}
+  Permission(
+      PermissionId id,
+      String name,
+      PermissionCode code,
+      String description,
+      PermissionStatus status,
+      LocalDateTime createTime,
+      LocalDateTime updateTime) {
+    this.id = id;
+    this.name = name;
+    this.code = code;
+    this.description = description;
+    this.status = status;
+    super(createTime, updateTime);
+  }
 
-	public void disable() {
-		if (this.status == PermissionStatus.DISABLED)
-			throw new IllegalStateException();
+  public void disable() {
+    if (this.status == PermissionStatus.DISABLED) throw new IllegalStateException();
 
-		this.status = PermissionStatus.DISABLED;
+    this.status = PermissionStatus.DISABLED;
 
-		markUpdated();
-	}
+    markUpdated();
+  }
 
-	public void enable() {
-		if (this.status == PermissionStatus.ENABLED)
-			throw new IllegalStateException();
+  public void enable() {
+    if (this.status == PermissionStatus.ENABLED) throw new IllegalStateException();
 
-		this.status = PermissionStatus.ENABLED;
+    this.status = PermissionStatus.ENABLED;
 
-		markUpdated();
-	}
+    markUpdated();
+  }
 
-	public void changeName(String newName) {
-		this.name = newName;
-		markUpdated();
-	}
+  public void changeName(String newName) {
+    this.name = newName;
+    markUpdated();
+  }
 
-	public void changeDescription(String newDescription) {
-		this.description = newDescription;
-		markUpdated();
-	}
+  public void changeDescription(String newDescription) {
+    this.description = newDescription;
+    markUpdated();
+  }
 
-	public boolean isEnable() {
-		return status == PermissionStatus.ENABLED;
-	}
+  public boolean isEnable() {
+    return status == PermissionStatus.ENABLED;
+  }
 
-	public PermissionId getId() {
-		return id;
-	}
+  public PermissionId getId() {
+    return id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public PermissionCode getCode() {
-		return code;
-	}
+  public PermissionCode getCode() {
+    return code;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public PermissionStatus getStatus() {
-		return status;
-	}
+  public PermissionStatus getStatus() {
+    return status;
+  }
 
-	public static Permission create(PermissionId id,
-			String name,
-			PermissionCode code,
-			String description,
-			LocalDateTime createTime) {
-		return new Permission(id, name, code, description, PermissionStatus.ENABLED, createTime, createTime);
-	}
+  public static Permission create(
+      PermissionId id,
+      String name,
+      PermissionCode code,
+      String description,
+      LocalDateTime createTime) {
+    return new Permission(
+        id, name, code, description, PermissionStatus.ENABLED, createTime, createTime);
+  }
 
-	public static Permission reconstitute(PermissionId id,
-			String name,
-			PermissionCode code,
-			String description,
-			PermissionStatus status,
-			LocalDateTime createTime,
-			LocalDateTime updateTime) {
-		return new Permission(id, name, code, description, status, createTime, updateTime);
-	}
+  public static Permission reconstitute(
+      PermissionId id,
+      String name,
+      PermissionCode code,
+      String description,
+      PermissionStatus status,
+      LocalDateTime createTime,
+      LocalDateTime updateTime) {
+    return new Permission(id, name, code, description, status, createTime, updateTime);
+  }
 }

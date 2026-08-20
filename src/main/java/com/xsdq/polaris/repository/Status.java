@@ -5,13 +5,12 @@ import lombok.Getter;
 
 @Getter
 public enum Status {
-    DISABLED((short) 0),
-    ENABLED((short) 1);
+  DISABLED((short) 0),
+  ENABLED((short) 1);
 
-    @EnumValue
-    private final short val;
+  @EnumValue private final short val;
 
-    Status(short val) {
-        this.val = val;
-    }
+  Status(short val) {
+    this.val = val;
+  }
 }

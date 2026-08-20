@@ -1,12 +1,12 @@
-package com.xsdq.polaris.account.domain.model.resource;
+package com.xsdq.polaris.account.domain.model.menu;
 
-public enum ResourceStatus {
+public enum MenuStatus {
   DISABLED((short) 0),
   ENABLED((short) 1);
 
   private final short status;
 
-  ResourceStatus(short status) {
+  MenuStatus(short status) {
     this.status = status;
   }
 

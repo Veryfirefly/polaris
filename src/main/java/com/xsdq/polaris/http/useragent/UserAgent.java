@@ -3,192 +3,178 @@ package com.xsdq.polaris.http.useragent;
 import java.io.Serializable;
 
 /**
- *
  * @author XiaoYu
  * @since 2025/12/29 17:33
  */
 public class UserAgent implements Serializable {
 
-	/**
-	 * 是否为移动平台
-	 */
-	private boolean mobile;
-	/**
-	 * 浏览器类型
-	 */
-	private Browser browser;
-	/**
-	 * 浏览器版本
-	 */
-	private String version;
+  /** 是否为移动平台 */
+  private boolean mobile;
 
-	/**
-	 * 平台类型
-	 */
-	private Platform platform;
+  /** 浏览器类型 */
+  private Browser browser;
 
-	/**
-	 * 系统类型
-	 */
-	private Os os;
-	/**
-	 * 系统版本
-	 */
-	private String osVersion;
+  /** 浏览器版本 */
+  private String version;
 
-	/**
-	 * 引擎类型
-	 */
-	private Engine engine;
-	/**
-	 * 引擎版本
-	 */
-	private String engineVersion;
+  /** 平台类型 */
+  private Platform platform;
 
-	/**
-	 * 是否为移动平台
-	 *
-	 * @return 是否为移动平台
-	 */
-	public boolean isMobile() {
-		return mobile;
-	}
+  /** 系统类型 */
+  private Os os;
 
-	/**
-	 * 设置是否为移动平台
-	 *
-	 * @param mobile 是否为移动平台
-	 */
-	public void setMobile(boolean mobile) {
-		this.mobile = mobile;
-	}
+  /** 系统版本 */
+  private String osVersion;
 
-	/**
-	 * 获取浏览器类型
-	 *
-	 * @return 浏览器类型
-	 */
-	public Browser getBrowser() {
-		return browser;
-	}
+  /** 引擎类型 */
+  private Engine engine;
 
-	/**
-	 * 设置浏览器类型
-	 *
-	 * @param browser 浏览器类型
-	 */
-	public void setBrowser(Browser browser) {
-		this.browser = browser;
-	}
+  /** 引擎版本 */
+  private String engineVersion;
 
-	/**
-	 * 获取平台类型
-	 *
-	 * @return 平台类型
-	 */
-	public Platform getPlatform() {
-		return platform;
-	}
+  /**
+   * 是否为移动平台
+   *
+   * @return 是否为移动平台
+   */
+  public boolean isMobile() {
+    return mobile;
+  }
 
-	/**
-	 * 设置平台类型
-	 *
-	 * @param platform 平台类型
-	 */
-	public void setPlatform(Platform platform) {
-		this.platform = platform;
-	}
+  /**
+   * 设置是否为移动平台
+   *
+   * @param mobile 是否为移动平台
+   */
+  public void setMobile(boolean mobile) {
+    this.mobile = mobile;
+  }
 
-	/**
-	 * 获取系统类型
-	 *
-	 * @return 系统类型
-	 */
-	public Os getOs() {
-		return os;
-	}
+  /**
+   * 获取浏览器类型
+   *
+   * @return 浏览器类型
+   */
+  public Browser getBrowser() {
+    return browser;
+  }
 
-	/**
-	 * 设置系统类型
-	 *
-	 * @param os 系统类型
-	 */
-	public void setOs(Os os) {
-		this.os = os;
-	}
+  /**
+   * 设置浏览器类型
+   *
+   * @param browser 浏览器类型
+   */
+  public void setBrowser(Browser browser) {
+    this.browser = browser;
+  }
 
-	/**
-	 * 获取系统版本
-	 *
-	 * @return 系统版本
-	 * @since 5.7.4
-	 */
-	public String getOsVersion() {
-		return this.osVersion;
-	}
+  /**
+   * 获取平台类型
+   *
+   * @return 平台类型
+   */
+  public Platform getPlatform() {
+    return platform;
+  }
 
-	/**
-	 * 设置系统版本
-	 *
-	 * @param osVersion 系统版本
-	 * @since 5.7.4
-	 */
-	public void setOsVersion(String osVersion) {
-		this.osVersion = osVersion;
-	}
+  /**
+   * 设置平台类型
+   *
+   * @param platform 平台类型
+   */
+  public void setPlatform(Platform platform) {
+    this.platform = platform;
+  }
 
-	/**
-	 * 获取引擎类型
-	 *
-	 * @return 引擎类型
-	 */
-	public Engine getEngine() {
-		return engine;
-	}
+  /**
+   * 获取系统类型
+   *
+   * @return 系统类型
+   */
+  public Os getOs() {
+    return os;
+  }
 
-	/**
-	 * 设置引擎类型
-	 *
-	 * @param engine 引擎类型
-	 */
-	public void setEngine(Engine engine) {
-		this.engine = engine;
-	}
+  /**
+   * 设置系统类型
+   *
+   * @param os 系统类型
+   */
+  public void setOs(Os os) {
+    this.os = os;
+  }
 
-	/**
-	 * 获取浏览器版本
-	 *
-	 * @return 浏览器版本
-	 */
-	public String getVersion() {
-		return version;
-	}
+  /**
+   * 获取系统版本
+   *
+   * @return 系统版本
+   * @since 5.7.4
+   */
+  public String getOsVersion() {
+    return this.osVersion;
+  }
 
-	/**
-	 * 设置浏览器版本
-	 *
-	 * @param version 浏览器版本
-	 */
-	public void setVersion(String version) {
-		this.version = version;
-	}
+  /**
+   * 设置系统版本
+   *
+   * @param osVersion 系统版本
+   * @since 5.7.4
+   */
+  public void setOsVersion(String osVersion) {
+    this.osVersion = osVersion;
+  }
 
-	/**
-	 * 获取引擎版本
-	 *
-	 * @return 引擎版本
-	 */
-	public String getEngineVersion() {
-		return engineVersion;
-	}
+  /**
+   * 获取引擎类型
+   *
+   * @return 引擎类型
+   */
+  public Engine getEngine() {
+    return engine;
+  }
 
-	/**
-	 * 设置引擎版本
-	 *
-	 * @param engineVersion 引擎版本
-	 */
-	public void setEngineVersion(String engineVersion) {
-		this.engineVersion = engineVersion;
-	}
+  /**
+   * 设置引擎类型
+   *
+   * @param engine 引擎类型
+   */
+  public void setEngine(Engine engine) {
+    this.engine = engine;
+  }
 
+  /**
+   * 获取浏览器版本
+   *
+   * @return 浏览器版本
+   */
+  public String getVersion() {
+    return version;
+  }
+
+  /**
+   * 设置浏览器版本
+   *
+   * @param version 浏览器版本
+   */
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  /**
+   * 获取引擎版本
+   *
+   * @return 引擎版本
+   */
+  public String getEngineVersion() {
+    return engineVersion;
+  }
+
+  /**
+   * 设置引擎版本
+   *
+   * @param engineVersion 引擎版本
+   */
+  public void setEngineVersion(String engineVersion) {
+    this.engineVersion = engineVersion;
+  }
 }

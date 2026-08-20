@@ -1,9 +1,8 @@
 package com.xsdq.polaris.repository.dao;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xsdq.polaris.repository.po.MenuPO;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,5 +12,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MenuDao extends BaseMapper<MenuPO> {
 
-	List<MenuPO> findMenusByRoleId(List<Long> list);
+  List<MenuPO> findMenusByRoleId(List<Long> list);
 }

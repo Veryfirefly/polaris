@@ -5,13 +5,12 @@ import lombok.Getter;
 
 @Getter
 public enum OperationStatus {
-	ABNORMAL((short) 0),
-	NORMAL((short) 1);
+  ABNORMAL((short) 0),
+  NORMAL((short) 1);
 
-	@EnumValue
-	private final short value;
+  @EnumValue private final short value;
 
-	OperationStatus(short value) {
-		this.value = value;
-	}
+  OperationStatus(short value) {
+    this.value = value;
+  }
 }

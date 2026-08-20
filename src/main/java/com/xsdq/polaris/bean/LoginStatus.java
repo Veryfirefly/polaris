@@ -5,14 +5,13 @@ import lombok.Getter;
 
 @Getter
 public enum LoginStatus {
-	LOGGED_IN((short) 0),
-	LOGGED_OUT((short) 1),
-	RENEWAL((short) 2);
+  LOGGED_IN((short) 0),
+  LOGGED_OUT((short) 1),
+  RENEWAL((short) 2);
 
-	@EnumValue
-	private final short value;
+  @EnumValue private final short value;
 
-	LoginStatus(short value) {
-		this.value = value;
-	}
+  LoginStatus(short value) {
+    this.value = value;
+  }
 }

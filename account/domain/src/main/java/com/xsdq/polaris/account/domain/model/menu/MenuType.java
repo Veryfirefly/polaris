@@ -1,6 +1,6 @@
-package com.xsdq.polaris.account.domain.model.resource;
+package com.xsdq.polaris.account.domain.model.menu;
 
-public enum ResourceType {
+public enum MenuType {
 
 	DIRECTORY((short) 0),
 	MENU((short) 1),
@@ -8,7 +8,7 @@ public enum ResourceType {
 
 	private final short type;
 
-	ResourceType(short type) {
+	MenuType(short type) {
 		this.type = type;
 	}
 

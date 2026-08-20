@@ -9,17 +9,17 @@ import java.util.Set;
  * @author XiaoYu
  * @since 2026/8/19 13:22
  */
-public record ApiRequestURI(URI uri, String method) {
+public record BackendURI(URI uri, String method) {
 
   private static final Set<String> REQUEST_METHODS =
       Set.of("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE");
 
-  public ApiRequestURI {
+  public BackendURI {
     if (uri == null) throw new IllegalArgumentException("URI不能为空");
 
-    String upperCaseMethod = method.toUpperCase();
-    if (!REQUEST_METHODS.contains(upperCaseMethod))
-      throw new IllegalArgumentException("不支持的http请求方法");
+    String uppercaseMethod = method.toUpperCase();
+    if (!REQUEST_METHODS.contains(uppercaseMethod))
+      throw new IllegalArgumentException("非法的HTTP请求方法: %s".formatted(method));
   }
 
   @Override
@@ -30,7 +30,7 @@ public record ApiRequestURI(URI uri, String method) {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    ApiRequestURI that = (ApiRequestURI) o;
+    BackendURI that = (BackendURI) o;
     return Objects.equals(uri, that.uri) && Objects.equals(method, that.method);
   }
 
@@ -44,15 +44,15 @@ public record ApiRequestURI(URI uri, String method) {
     return method + " " + uri;
   }
 
-  public static ApiRequestURI of(String uri, String method) {
+  public static BackendURI of(String uri, String method) {
     try {
       return of(new URI(uri), method);
     } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("非法的URI");
+      throw new IllegalArgumentException("非法的URI: %s".formatted(uri), e);
     }
   }
 
-  public static ApiRequestURI of(URI uri, String method) {
-    return new ApiRequestURI(uri, method);
+  public static BackendURI of(URI uri, String method) {
+    return new BackendURI(uri, method);
   }
 }

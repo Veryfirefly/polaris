@@ -1,11 +1,10 @@
 package com.xsdq.polaris.infrastructure.identity;
 
 /**
- *
  * @author XiaoYu
  * @since 2026/8/19 17:36
  */
-public interface IdentityGenerator {
+public interface IdentityGenerator<T> {
 
-	<T> Identity<T> generate();
+  Identity<T> generate() throws IdentityGenerateException;
 }

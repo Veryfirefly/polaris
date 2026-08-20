@@ -1,14 +1,14 @@
-package com.xsdq.polaris.account.domain.model.resource;
+package com.xsdq.polaris.account.domain.model.menu;
 
 import com.xsdq.polaris.common.annotation.Untested;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public record ResourceName(String name) {
+public record MenuName(String name) {
 
   @Untested private static final Pattern NAME_REGEX = Pattern.compile("^[a-zA-Z]+$");
 
-  public ResourceName {
+  public MenuName {
     if (name == null || name.isBlank()) throw new IllegalArgumentException("菜单名称不能为空");
     if (!NAME_REGEX.matcher(name).matches())
       throw new IllegalArgumentException("菜单名称只能使用大写或小写的英文字母");
@@ -17,7 +17,7 @@ public record ResourceName(String name) {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    ResourceName that = (ResourceName) o;
+    MenuName that = (MenuName) o;
     return Objects.equals(name, that.name);
   }
 

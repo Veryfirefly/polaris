@@ -1,13 +1,12 @@
 package com.xsdq.polaris.repository.po;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.xsdq.polaris.repository.Permission;
 import com.xsdq.polaris.repository.Status;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.Getter;
 
@@ -19,64 +18,64 @@ import lombok.Getter;
 @TableName("menus")
 public class MenuPO {
 
-	@TableId
-	private Long id;
-	private Long parentId;
-	private String name;
-	private String url;
-	private String method;
-	private String path;
-	private String component;
-	private String redirect;
-	private Type type;
-	@TableField("`order`")
-	private Integer order;
-	private Status status;
-	private String permission;
-	private String iconPath;
-	private String title;
-	private Boolean cacheable;
-	private Boolean hidden;
-	private Boolean hiddenHeader;
-	private Boolean hiddenChildren;
-	private String target;
-	private String remark;
-	private LocalDateTime createTime;
-	private LocalDateTime updateTime;
+  @TableId private Long id;
+  private Long parentId;
+  private String name;
+  private String url;
+  private String method;
+  private String path;
+  private String component;
+  private String redirect;
+  private Type type;
 
-	public Permission createPermission() {
-		if (type != Type.BUTTON)
-			throw new IllegalStateException("This menu does not grant permissions.");
-		return new Permission(id, name, url, method, status, permission);
-	}
+  @TableField("`order`")
+  private Integer order;
 
-	public boolean isButton() {
-		return type == Type.BUTTON;
-	}
+  private Status status;
+  private String permission;
+  private String iconPath;
+  private String title;
+  private Boolean cacheable;
+  private Boolean hidden;
+  private Boolean hiddenHeader;
+  private Boolean hiddenChildren;
+  private String target;
+  private String remark;
+  private LocalDateTime createTime;
+  private LocalDateTime updateTime;
 
-	public boolean isDirOrMenu() {
-		return type == Type.DIRECTORY || type == Type.MENU;
-	}
+  public Permission createPermission() {
+    if (type != Type.BUTTON)
+      throw new IllegalStateException("This menu does not grant permissions.");
+    return new Permission(id, name, url, method, status, permission);
+  }
 
-	public boolean isTopLevel() {
-		return parentId == 0;
-	}
+  public boolean isButton() {
+    return type == Type.BUTTON;
+  }
 
-	public boolean enabled() {
-		return status == Status.ENABLED;
-	}
+  public boolean isDirOrMenu() {
+    return type == Type.DIRECTORY || type == Type.MENU;
+  }
 
-	@Getter
-	public enum Type {
-		DIRECTORY((short) 0),
-		MENU((short) 1),
-		BUTTON((short) 2);
+  public boolean isTopLevel() {
+    return parentId == 0;
+  }
 
-		@EnumValue
-		private final Short val;
+  public boolean enabled() {
+    return status == Status.ENABLED;
+  }
 
-		Type(Short val) {
-			this.val = val;
-		}
-	}
+  @Getter
+  public enum Type {
+    DIRECTORY((short) 0),
+    MENU((short) 1),
+    BUTTON((short) 2);
+
+    @EnumValue private final Short val;
+
+    Type(Short val) {
+      this.val = val;
+    }
+  }
 }
