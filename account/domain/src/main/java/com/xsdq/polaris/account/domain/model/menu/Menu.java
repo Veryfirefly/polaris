@@ -26,7 +26,7 @@ public class Menu extends BaseEntity {
   private boolean cacheable;
   private boolean hidden;
   private boolean hiddenHeader;
-  private boolean hiddenChildren;
+  private boolean hiddenChildrenInMenu;
   private String target;
   private String remark;
   private BackendURI backendUri;
@@ -48,7 +48,7 @@ public class Menu extends BaseEntity {
       boolean cacheable,
       boolean hidden,
       boolean hiddenHeader,
-      boolean hiddenChildren,
+      boolean hiddenChildrenInMenu,
       String target,
       String remark,
       BackendURI backendUri,
@@ -69,7 +69,7 @@ public class Menu extends BaseEntity {
     this.cacheable = cacheable;
     this.hidden = hidden;
     this.hiddenHeader = hiddenHeader;
-    this.hiddenChildren = hiddenChildren;
+    this.hiddenChildrenInMenu = hiddenChildrenInMenu;
     this.target = target;
     this.remark = remark;
     this.backendUri = backendUri;
@@ -125,49 +125,57 @@ public class Menu extends BaseEntity {
   }
 
   public void cacheable() {
-    this.cacheable = true;
-    markUpdated();
+    if (type.cacheable()) {
+      this.cacheable = true;
+      markUpdated();
+    }
   }
 
   public void uncacheable() {
-    this.cacheable = false;
-    markUpdated();
+    if (type.cacheable()) {
+      this.cacheable = false;
+      markUpdated();
+    }
   }
 
   public void hidden() {
-    this.hidden = true;
-    markUpdated();
+    if (type.canHideSelf()) {
+      this.hidden = true;
+      markUpdated();
+    }
   }
 
   public void visible() {
-    this.hidden = false;
-    markUpdated();
+    if (type.canHideSelf()) {
+      this.hidden = false;
+      markUpdated();
+    }
   }
 
-  public void hiddenHeader() {
-    if (type == MenuType.MENU) {
+  public void hiddenPageHeader() {
+    if (type.canHidePageHeader()) {
       this.hiddenHeader = true;
       markUpdated();
     }
   }
 
-  public void visibleHeader() {
-    if (type == MenuType.MENU) {
+  public void visiblePageHeader() {
+    if (type.canHidePageHeader()) {
       this.hiddenHeader = false;
       markUpdated();
     }
   }
 
-  public void hiddenChildren() {
-    if (type == MenuType.MENU) {
-      this.hiddenChildren = true;
+  public void hiddenChildrenInMenu() {
+    if (type.canHideChildrenInMenu()) {
+      this.hiddenChildrenInMenu = true;
       markUpdated();
     }
   }
 
-  public void visibleChildren() {
-    if (type == MenuType.MENU) {
-      this.hiddenChildren = false;
+  public void visibleChildrenInMenu() {
+    if (type.canHideChildrenInMenu()) {
+      this.hiddenChildrenInMenu = false;
       markUpdated();
     }
   }
@@ -263,12 +271,12 @@ public class Menu extends BaseEntity {
     return hidden;
   }
 
-  public boolean isHiddenHeader() {
+  public boolean isHiddenPageHeader() {
     return hiddenHeader;
   }
 
-  public boolean isHiddenChildren() {
-    return hiddenChildren;
+  public boolean isHiddenChildrenInMenu() {
+    return hiddenChildrenInMenu;
   }
 
   public String getTarget() {
@@ -291,49 +299,68 @@ public class Menu extends BaseEntity {
     return status;
   }
 
-  public static Menu create(
-      MenuId id,
-      MenuId parentId,
-      MenuName name,
-      FrontendURI frontendUri,
-      String component,
-      String redirect,
-      MenuType type,
-      int sort,
-      String icon,
-      String title,
-      boolean cacheable,
-      boolean hidden,
-      boolean hiddenHeader,
-      boolean hiddenChildren,
-      String target,
-      String remark,
-      BackendURI backendUri,
-      PermissionId permissionId,
-      LocalDateTime createTime) {
+  public static Menu create(MenuId id,
+                            MenuId parentId,
+                            MenuName name,
+                            FrontendURI frontendUri,
+                            String component,
+                            String redirect,
+                            MenuType type,
+                            int sort,
+                            String icon,
+                            String title,
+                            boolean cacheable,
+                            boolean hidden,
+                            boolean hiddenHeader,
+                            boolean hiddenChildren,
+                            String target,
+                            String remark,
+                            BackendURI backendUri,
+                            PermissionId permissionId,
+                            LocalDateTime createTime) {
     return switch (type) {
       case DIRECTORY -> createDirectory(id, name, frontendUri, redirect, sort, icon, title, hidden, remark, createTime);
       case MENU -> createMenu(id, parentId, name, frontendUri, component, sort, icon, title, cacheable, hidden, hiddenHeader, hiddenChildren, target, remark, createTime);
-      case API -> createApi();
+      case API -> createApi(id, parentId, name, sort, icon, title, hidden, target, remark, backendUri, permissionId, createTime);
     };
   }
 
-  public static Menu reconstitute() {
-    return null;
+  public static Menu reconstitute(MenuId id,
+                                  MenuId parentId,
+                                  MenuName name,
+                                  FrontendURI frontendUri,
+                                  String component,
+                                  String redirect,
+                                  MenuType type,
+                                  int sort,
+                                  String icon,
+                                  String title,
+                                  boolean cacheable,
+                                  boolean hidden,
+                                  boolean hiddenHeader,
+                                  boolean hiddenChildrenInMenu,
+                                  String target,
+                                  String remark,
+                                  BackendURI backendUri,
+                                  PermissionId permissionId,
+                                  MenuStatus status,
+                                  LocalDateTime createTime,
+                                  LocalDateTime updateTime) {
+    return new Menu(id, parentId, name, frontendUri, component, redirect, type, sort, icon, title, cacheable, hidden,
+            hiddenHeader, hiddenChildrenInMenu, target, remark, backendUri, permissionId, status, createTime, updateTime);
   }
 
   // 通常情况下, 目录不需要parentId
-  private static Menu createDirectory(
-          MenuId id,
-          MenuName name,
-          FrontendURI frontendUri,
-          String redirect,
-          int sort,
-          String icon,
-          String title,
-          boolean hidden,
-          String remark,
-          LocalDateTime createTime) {
+  private static Menu createDirectory(MenuId id,
+                                      MenuName name,
+                                      FrontendURI frontendUri,
+                                      String redirect,
+                                      int sort,
+                                      String icon,
+                                      String title,
+                                      boolean hidden,
+                                      String remark,
+                                      LocalDateTime createTime) {
     if (redirect == null || redirect.isBlank())
       throw new IllegalArgumentException("目录菜单的跳转地址配置不能为空");
     if (title == null || title.isBlank())
@@ -363,26 +390,60 @@ public class Menu extends BaseEntity {
             createTime);
   }
 
-  private static Menu createMenu(
-          MenuId id,
-          MenuId parentId,
-          MenuName name,
-          FrontendURI frontendUri,
-          String component,
-          int sort,
-          String icon,
-          String title,
-          boolean cacheable,
-          boolean hidden,
-          boolean hiddenHeader,
-          boolean hiddenChildren,
-          String target,
-          String remark,
-          LocalDateTime createTime) {
-    return null;
+  private static Menu createMenu(MenuId id,
+                                 MenuId parentId,
+                                 MenuName name,
+                                 FrontendURI frontendUri,
+                                 String component,
+                                 int sort,
+                                 String icon,
+                                 String title,
+                                 boolean cacheable,
+                                 boolean hidden,
+                                 boolean hiddenHeader,
+                                 boolean hiddenChildren,
+                                 String target,
+                                 String remark,
+                                 LocalDateTime createTime) {
+    if (parentId == null)
+      throw new IllegalArgumentException("菜单必须绑定父级菜单id");
+    if (name == null)
+      throw new IllegalArgumentException("菜单需要配置名称用于全局唯一性区分");
+    if (frontendUri == null)
+      throw new IllegalArgumentException("菜单需要配置路径");
+    if ((component == null || component.isBlank()) && !frontendUri.isExternalLink())
+      throw new IllegalArgumentException("当前菜单路径为非外部链接, 必须配置前端component");
+    if (title == null || title.isBlank())
+      throw new IllegalArgumentException("菜单必须配置显示名称");
+
+    return new Menu(id, parentId, name, frontendUri, component, null, MenuType.MENU, Math.max(sort, 0), icon,
+            title, cacheable, hidden, hiddenHeader, hiddenChildren, target, remark, null, null,
+            MenuStatus.ENABLED, createTime, createTime);
   }
 
-  private static Menu createApi() {
-    return null;
+  private static Menu createApi(MenuId id,
+                                MenuId parentId,
+                                MenuName name, // todo ?
+                                int sort,
+                                String icon,
+                                String title,
+                                boolean hidden,
+                                String target,
+                                String remark,
+                                BackendURI backendUri,
+                                PermissionId permissionId,
+                                LocalDateTime createTime) {
+    if (parentId == null)
+      throw new IllegalArgumentException("菜单必须绑定父级菜单id");
+    if (name == null)
+      throw new IllegalArgumentException("菜单需要配置名称用于全局唯一性区分");
+    if (backendUri == null)
+      throw new IllegalArgumentException("菜单需要配置后端路径");
+    if (permissionId == null)
+      throw new IllegalArgumentException("菜单需要配置权限");
+
+    return new Menu(id, parentId, name, null, null, null, MenuType.API, Math.max(sort, 0), icon,
+            title, false, hidden, false, false, target, remark, backendUri, permissionId,
+            MenuStatus.ENABLED, createTime, createTime);
   }
 }

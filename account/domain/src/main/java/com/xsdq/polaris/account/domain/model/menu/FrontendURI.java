@@ -23,6 +23,10 @@ public record FrontendURI(URI uri) {
 		return Objects.hashCode(uri);
 	}
 
+	public boolean isExternalLink() {
+		return uri.getScheme().equals("http") || uri.getScheme().equals("https");
+	}
+
 	public static FrontendURI create(URI uri) {
 		return new FrontendURI(uri);
 	}
