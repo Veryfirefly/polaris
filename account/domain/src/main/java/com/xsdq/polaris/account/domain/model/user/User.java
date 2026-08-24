@@ -186,7 +186,8 @@ public class User extends BaseEntity {
       Account account,
       Password password,
       Email email,
-      Set<RoleId> assignRoleIds) {
+      Set<RoleId> assignRoleIds,
+      LocalDateTime createTime) {
     return new User(
         userId,
         tenantId,
@@ -199,8 +200,8 @@ public class User extends BaseEntity {
         null,
         UserStatus.INACTIVE,
         assignRoleIds,
-        LocalDateTime.now(),
-        LocalDateTime.now());
+        createTime,
+        createTime);
   }
 
   public static User reconstitute(

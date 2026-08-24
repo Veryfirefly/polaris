@@ -3,6 +3,7 @@ package com.xsdq.polaris.account.domain.model.tenant;
 import com.xsdq.polaris.account.domain.model.BaseEntity;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author XiaoYu
@@ -17,6 +18,7 @@ public class Tenant extends BaseEntity {
   private String contact;
   private String logo;
   private TenantStatus status;
+  private Set<TenantMenu> menus;
 
   Tenant(
       TenantId id,
@@ -43,21 +45,24 @@ public class Tenant extends BaseEntity {
   }
 
   public void frozen() {
-    if (this.status == TenantStatus.FROZEN) throw new IllegalStateException();
+    if (this.status == TenantStatus.FROZEN)
+        throw new IllegalStateException("租户当前状态已为冻结状态");
 
     this.status = TenantStatus.FROZEN;
     markUpdated();
   }
 
   public void normal() {
-    if (this.status == TenantStatus.NORMAL) throw new IllegalStateException();
+    if (this.status == TenantStatus.NORMAL)
+        throw new IllegalStateException("租户当前状态已为正常状态");
 
     this.status = TenantStatus.NORMAL;
     markUpdated();
   }
 
   public void expired() {
-    if (this.status == TenantStatus.EXPIRED) throw new IllegalStateException();
+    if (this.status == TenantStatus.EXPIRED)
+        throw new IllegalStateException("租户当前状态已为过期状态");
 
     this.status = TenantStatus.EXPIRED;
     markUpdated();
