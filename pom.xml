@@ -13,12 +13,10 @@
     <url>https://polaris.xsdq.xyz/</url>
 
     <modules>
-        <module>account</module>
-        <module>repair</module>
-        <module>renovate</module>
         <module>infrastructure</module>
         <module>common</module>
-<!--        <module>console</module>-->
+        <module>domain</module>
+        <module>console</module>
     </modules>
 
     <developers>
@@ -84,27 +82,17 @@
             <!-- Polaris modules -->
             <dependency>
                 <groupId>com.xsdq.polaris</groupId>
-                <artifactId>repair</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.xsdq.polaris</groupId>
-                <artifactId>renovate</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.xsdq.polaris</groupId>
-                <artifactId>account</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.xsdq.polaris</groupId>
                 <artifactId>polaris-infrastructure</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.xsdq.polaris</groupId>
                 <artifactId>polaris-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xsdq.polaris</groupId>
+                <artifactId>polaris-domain</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

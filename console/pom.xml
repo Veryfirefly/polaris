@@ -3,5 +3,18 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.xsdq.polaris</groupId>
+        <artifactId>polaris</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>polaris-console</artifactId>
+    <name>Polaris console</name>
+    <packaging>jar</packaging>
+
+    <build>
+        <finalName>polaris-console</finalName>
+    </build>
 
 </project>

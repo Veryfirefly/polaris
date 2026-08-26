@@ -30,6 +30,16 @@
 			<groupId>com.xsdq.polaris</groupId>
 			<artifactId>polaris-common</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.xsdq.polaris</groupId>
+            <artifactId>polaris-domain</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.xsdq.polaris</groupId>
+                    <artifactId>polaris-common</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
