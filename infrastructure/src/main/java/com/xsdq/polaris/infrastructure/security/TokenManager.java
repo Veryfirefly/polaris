@@ -1,6 +1,6 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.account.domain.model.tenant.TenantId;
+import com.xsdq.polaris.domain.account.model.tenant.TenantId;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,5 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.account.impl.security.PolarisUserDetails;
-import com.xsdq.polaris.account.impl.security.TokenManager;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

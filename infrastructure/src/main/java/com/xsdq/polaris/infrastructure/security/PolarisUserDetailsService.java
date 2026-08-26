@@ -1,15 +1,9 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.account.impl.service.UserService;
-import com.xsdq.polaris.core.error.TenantException;
-import com.xsdq.polaris.repository.Permission;
-import com.xsdq.polaris.repository.po.RolePO;
-import com.xsdq.polaris.repository.po.TenantPO;
-import com.xsdq.polaris.repository.po.UserPO;
-import com.xsdq.polaris.security.autoconfigure.PolarisSecurityProperties;
-import com.xsdq.polaris.service.RoleService;
-import com.xsdq.polaris.service.TenantService;
-import com.xsdq.polaris.util.Utils;
+import com.xsdq.polaris.infrastructure.persistence.account.RolePO;
+import com.xsdq.polaris.infrastructure.persistence.account.TenantPO;
+import com.xsdq.polaris.infrastructure.persistence.account.UserPO;
+import com.xsdq.polaris.infrastructure.security.autoconfigure.PolarisSecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +15,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
 public class PolarisUserDetailsService implements UserDetailsService {
 
   private final Logger log = LoggerFactory.getLogger(PolarisUserDetailsService.class);

@@ -1,6 +1,6 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.core.error.PolarisRuntimeException;
+import com.xsdq.polaris.common.errors.PolarisRuntimeException;
 
 public record GeneratedToken(String token, long timeToLiveMs, long tenantId) {
 

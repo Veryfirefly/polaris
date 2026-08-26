@@ -1,8 +1,8 @@
 package com.xsdq.polaris.infrastructure.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xsdq.polaris.account.infrastructure.security.*;
-import com.xsdq.polaris.account.infrastructure.security.autoconfigure.PolarisSecurityProperties;
+import com.xsdq.polaris.infrastructure.security.*;
+import com.xsdq.polaris.infrastructure.security.autoconfigure.PolarisSecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,9 +1,7 @@
 package com.xsdq.polaris.infrastructure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xsdq.polaris.error.TenantException;
-import com.xsdq.polaris.repository.Response;
-import com.xsdq.polaris.util.Utils;
+import com.xsdq.polaris.common.response.Response;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

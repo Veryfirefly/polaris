@@ -1,14 +1,8 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.account.impl.security.TokenManager;
-import com.xsdq.polaris.account.impl.security.autoconfigure.PolarisSecurityProperties;
-import com.xsdq.polaris.account.infrastructure.security.PolarisUserDetails;
-import com.xsdq.polaris.bean.LoginStatus;
-import com.xsdq.polaris.bean.event.LoginHistoryEvent;
-import com.xsdq.polaris.core.cache.RedisCacheService;
-import com.xsdq.polaris.tenant.TenantId;
-import com.xsdq.polaris.util.ApplicationUtils;
-import com.xsdq.polaris.util.Utils;
+import com.xsdq.polaris.domain.account.model.tenant.TenantId;
+import com.xsdq.polaris.infrastructure.security.autoconfigure.PolarisSecurityProperties;
+import com.xsdq.polaris.infrastructure.utils.ApplicationUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -49,7 +43,7 @@ public class JwtTokenManager implements TokenManager<PolarisUserDetails> {
       () -> UUID.randomUUID().toString().replace("-", "");
 
   public JwtTokenManager(
-      PolarisSecurityProperties securityProps, RedisCacheService redisCacheService) {
+          PolarisSecurityProperties securityProps, RedisCacheService redisCacheService) {
     this.timeToLive = securityProps.getToken().getTimeToLive();
     this.timeToRefresh = securityProps.getToken().getTimeToRefresh();
     this.secretKey = securityProps.getToken().signingKey();
