@@ -1,6 +1,6 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.domain.account.model.tenant.TenantId;
+import com.xsdq.polaris.domain.model.tenant.TenantId;
 import com.xsdq.polaris.infrastructure.security.autoconfigure.PolarisSecurityProperties;
 import com.xsdq.polaris.infrastructure.utils.ApplicationUtils;
 import io.jsonwebtoken.Claims;

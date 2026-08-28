@@ -1,7 +1,9 @@
 package com.xsdq.polaris.infrastructure.mapper.account;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xsdq.polaris.account.infrastructure.persistence.RolePO;
+import com.xsdq.polaris.infrastructure.persistence.RolePO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,4 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2026/8/10 18:02
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<RolePO> {}
+public interface RoleMapper extends BaseMapper<RolePO> {
+
+	List<RolePO> selectByUserId(Long userId);
+}

@@ -1,8 +1,8 @@
 package com.xsdq.polaris.infrastructure.security;
 
-import com.xsdq.polaris.infrastructure.persistence.account.RolePO;
-import com.xsdq.polaris.infrastructure.persistence.account.TenantPO;
-import com.xsdq.polaris.infrastructure.persistence.account.UserPO;
+import com.xsdq.polaris.infrastructure.persistence.RolePO;
+import com.xsdq.polaris.infrastructure.persistence.TenantPO;
+import com.xsdq.polaris.infrastructure.persistence.UserPO;
 import com.xsdq.polaris.infrastructure.security.autoconfigure.PolarisSecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +47,10 @@ public class PolarisUserDetailsService implements UserDetailsService {
     TenantPO tenant = tenantService.getTenantById(user.getTenantId());
     if (tenant == null) {
       log.error("该用户'{}'所属的租户'{}'不存在, 或已删除.", username, user.getTenantId());
-      throw new TenantException("当前租户不存在");
+      throw new TenantNotFoundException("当前租户不存在");
     }
 
-    if (!tenant.enabled()) throw new TenantException("该用户所属的租户已冻结.");
+    if (!tenant.enabled()) throw new TenantNotFoundException("该用户所属的租户已冻结.");
 
     List<RolePO> roles = roleService.getRolesByUserId(user.getId());
     List<GrantedAuthority> authorities = new ArrayList<>();

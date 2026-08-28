@@ -1,7 +1,7 @@
 package com.xsdq.polaris.infrastructure.mapper.account;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xsdq.polaris.infrastructure.persistence.account.UserPO;
+import com.xsdq.polaris.infrastructure.persistence.UserPO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

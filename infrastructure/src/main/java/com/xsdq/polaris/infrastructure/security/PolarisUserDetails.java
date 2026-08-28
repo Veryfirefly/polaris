@@ -2,7 +2,7 @@ package com.xsdq.polaris.infrastructure.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xsdq.polaris.infrastructure.cache.SerializeTag;
-import com.xsdq.polaris.infrastructure.persistence.account.UserPO;
+import com.xsdq.polaris.infrastructure.persistence.UserPO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

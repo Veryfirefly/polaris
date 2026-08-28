@@ -32,7 +32,7 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
           case BadCredentialsException bce -> Response.forbidden(bce);
           case AccountExpiredException aee -> Response.forbidden(aee);
           case DisabledException de -> Response.forbidden(de);
-          case TenantException te -> Response.forbidden(te);
+          case TenantNotFoundException te -> Response.forbidden(te);
           case InsufficientAuthenticationException iae -> Response.forbidden(iae);
           case AuthenticationCredentialsNotFoundException acnfe -> Response.unauthorized(acnfe);
           case InternalAuthenticationServiceException e -> {

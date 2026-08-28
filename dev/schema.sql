@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS users
     update_time TIMESTAMP            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id),
     UNIQUE KEY uk_account (account),
+    UNIQUE KEY uk_email (email),
     KEY union_key(account, nickname, create_time)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
