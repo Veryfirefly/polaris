@@ -26,4 +26,12 @@ public enum TenantStatus {
   public short getStatus() {
     return status;
   }
+
+  public static TenantStatus of(short status) {
+      for (TenantStatus tenantStatus : values()) {
+          if (tenantStatus.status == status)
+              return tenantStatus;
+      }
+      return null;
+  }
 }

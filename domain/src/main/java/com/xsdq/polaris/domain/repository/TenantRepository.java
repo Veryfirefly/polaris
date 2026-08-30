@@ -4,6 +4,7 @@ import com.xsdq.polaris.domain.model.tenant.Tenant;
 import com.xsdq.polaris.domain.model.tenant.TenantId;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author XiaoYu
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public interface TenantRepository {
 
-  Tenant findById(TenantId id);
+  Optional<Tenant> findById(TenantId id);
 
   List<Tenant> findAll();
 

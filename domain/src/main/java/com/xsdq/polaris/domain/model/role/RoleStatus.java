@@ -13,4 +13,12 @@ public enum RoleStatus {
   public short getStatus() {
     return status;
   }
+
+  public static RoleStatus of(short status) {
+      for (RoleStatus roleStatus : values()) {
+          if (roleStatus.getStatus() == status)
+              return roleStatus;
+      }
+      return null;
+  }
 }

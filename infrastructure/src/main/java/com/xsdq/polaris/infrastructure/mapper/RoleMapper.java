@@ -1,4 +1,4 @@
-package com.xsdq.polaris.infrastructure.mapper.account;
+package com.xsdq.polaris.infrastructure.mapper;
 
 import java.util.List;
 
@@ -14,4 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface RoleMapper extends BaseMapper<RolePO> {
 
 	List<RolePO> selectByUserId(Long userId);
+
+    List<RolePO> selectByTenantId(Long tenantId);
 }

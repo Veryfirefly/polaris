@@ -4,9 +4,9 @@ package com.xsdq.polaris.domain.repository;
 import com.xsdq.polaris.domain.model.role.Permission;
 import com.xsdq.polaris.domain.model.role.PermissionId;
 import com.xsdq.polaris.domain.model.role.RoleId;
-import com.xsdq.polaris.domain.model.tenant.TenantId;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author XiaoYu
@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface PermissionRepository {
 
-  Permission findById(PermissionId id);
+  Optional<Permission> findById(PermissionId id);
 
-  List<Permission> findAll(TenantId tenantId);
+  List<Permission> findAll();
 
-  List<Permission> findAllByRoleId(TenantId tenantId, RoleId roleId);
+  List<Permission> findAllByRoleId(RoleId roleId);
 
   Permission save(Permission permission);
 

@@ -1,10 +1,13 @@
-package com.xsdq.polaris.infrastructure.repository.account;
+package com.xsdq.polaris.infrastructure.repository;
 
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.xsdq.polaris.domain.model.role.Role;
+import com.xsdq.polaris.domain.model.role.RoleId;
 import com.xsdq.polaris.domain.model.tenant.TenantId;
 import com.xsdq.polaris.domain.model.user.Account;
 import com.xsdq.polaris.domain.model.user.Email;
@@ -12,7 +15,7 @@ import com.xsdq.polaris.domain.model.user.User;
 import com.xsdq.polaris.domain.model.user.UserId;
 import com.xsdq.polaris.domain.repository.RoleRepository;
 import com.xsdq.polaris.domain.repository.UserRepository;
-import com.xsdq.polaris.infrastructure.mapper.account.UserMapper;
+import com.xsdq.polaris.infrastructure.mapper.UserMapper;
 import com.xsdq.polaris.infrastructure.persistence.UserPO;
 import com.xsdq.polaris.infrastructure.persistence.assembler.UserAssembler;
 
@@ -39,8 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
       if (userPO == null)
         return Optional.empty();
 
-      List<Role> roles = roleRepository.findAllByUserId(TenantId.of(userPO.getTenantId()), id);
-      return Optional.of(UserAssembler.toDomain(userPO, roles));
+      return Optional.of(assembleUser(userPO));
   }
 
   @Override
@@ -49,8 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
     if (userPO == null)
       return Optional.empty();
 
-    List<Role> roles = roleRepository.findAllByUserId(TenantId.of(userPO.getTenantId()), UserId.of(userPO.getId()));
-    return Optional.of(UserAssembler.toDomain(userPO, roles));
+    return Optional.of(assembleUser(userPO));
   }
 
   @Override
@@ -59,13 +60,15 @@ public class UserRepositoryImpl implements UserRepository {
     if (userPO == null)
       return Optional.empty();
 
-    List<Role> roles = roleRepository.findAllByUserId(TenantId.of(userPO.getTenantId()), UserId.of(userPO.getId()));
-    return Optional.of(UserAssembler.toDomain(userPO, roles));
+    return Optional.of(assembleUser(userPO));
   }
 
   @Override
   public List<User> findAll(TenantId tenantId) {
-    return List.of();
+    return userMapper.selectByTenantId(tenantId.value())
+            .stream()
+            .map(this::assembleUser)
+            .toList();
   }
 
   @Override
@@ -76,5 +79,14 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public User save(User user) {
     return null;
+  }
+
+  private User assembleUser(UserPO userPO) {
+      TenantId tenantId = TenantId.of(userPO.getTenantId());
+      Set<RoleId> roleIds = roleRepository.findAllByUserId(tenantId, UserId.of(userPO.getId()))
+              .stream()
+              .map(Role::getRoleId)
+              .collect(Collectors.toSet());
+      return UserAssembler.toDomain(tenantId, userPO, roleIds);
   }
 }

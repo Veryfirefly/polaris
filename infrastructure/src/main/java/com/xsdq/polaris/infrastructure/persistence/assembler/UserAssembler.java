@@ -1,17 +1,11 @@
 package com.xsdq.polaris.infrastructure.persistence.assembler;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import com.xsdq.polaris.domain.model.role.Role;
+import com.xsdq.polaris.domain.model.role.RoleId;
 import com.xsdq.polaris.domain.model.tenant.TenantId;
-import com.xsdq.polaris.domain.model.user.Account;
-import com.xsdq.polaris.domain.model.user.Email;
-import com.xsdq.polaris.domain.model.user.Password;
-import com.xsdq.polaris.domain.model.user.User;
-import com.xsdq.polaris.domain.model.user.UserId;
-import com.xsdq.polaris.domain.model.user.UserStatus;
+import com.xsdq.polaris.domain.model.user.*;
 import com.xsdq.polaris.infrastructure.persistence.UserPO;
+
+import java.util.Set;
 
 /**
  *
@@ -20,10 +14,10 @@ import com.xsdq.polaris.infrastructure.persistence.UserPO;
  */
 public final class UserAssembler {
 
-	public static User toDomain(UserPO userPO, Collection<Role> roles) {
+	public static User toDomain(TenantId tenantId, UserPO userPO, Set<RoleId> roles) {
 		return User.reconstitute(
 				UserId.of(userPO.getId()),
-				TenantId.of(userPO.getTenantId()),
+                tenantId,
 				userPO.getNickname(),
 				Account.of(userPO.getAccount()),
 				Password.of(userPO.getPassword()),
@@ -32,7 +26,7 @@ public final class UserAssembler {
 				userPO.getAddress(),
 				userPO.getAvatarPath(),
 				UserStatus.of(userPO.getStatus()),
-				roles.stream().map(Role::getRoleId).collect(Collectors.toSet()),
+                roles,
 				userPO.getCreateTime(),
 				userPO.getUpdateTime());
 	}

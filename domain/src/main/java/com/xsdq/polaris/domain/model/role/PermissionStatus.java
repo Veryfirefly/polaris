@@ -13,4 +13,12 @@ public enum PermissionStatus {
   public short getStatus() {
     return status;
   }
+
+  public static PermissionStatus of(short status) {
+      for (PermissionStatus permissionStatus : values()) {
+          if (permissionStatus.status == status)
+              return permissionStatus;
+      }
+      return null;
+  }
 }
