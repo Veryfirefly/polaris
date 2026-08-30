@@ -1,11 +1,8 @@
 package com.xsdq.polaris.infrastructure.persistence;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
@@ -17,64 +14,28 @@ import java.time.LocalDateTime;
 @TableName("menus")
 public class MenuPO {
 
-  @TableId private Long id;
+  @TableId
+  private Long id;
   private Long parentId;
   private String name;
-  private String url;
-  private String method;
   private String path;
   private String component;
   private String redirect;
-  private Type type;
-
-  @TableField("`order`")
-  private Integer order;
-
-  private Short status;
-  private String permission;
+  private Short type;
+  private Integer sort;
   private String iconPath;
   private String title;
+  @Deprecated private Short status;
+  private String url;
+  private String method;
   private Boolean cacheable;
   private Boolean hidden;
   private Boolean hiddenHeader;
   private Boolean hiddenChildren;
   private String target;
   private String remark;
+  private Long permissionId;
   private LocalDateTime createTime;
   private LocalDateTime updateTime;
 
-  public Permission createPermission() {
-    if (type != Type.BUTTON)
-      throw new IllegalStateException("This menu does not grant permissions.");
-    return new Permission(id, name, url, method, status, permission);
-  }
-
-  public boolean isButton() {
-    return type == Type.BUTTON;
-  }
-
-  public boolean isDirOrMenu() {
-    return type == Type.DIRECTORY || type == Type.MENU;
-  }
-
-  public boolean isTopLevel() {
-    return parentId == 0;
-  }
-
-  public boolean enabled() {
-    return status == Status.ENABLED;
-  }
-
-  @Getter
-  public enum Type {
-    DIRECTORY((short) 0),
-    MENU((short) 1),
-    BUTTON((short) 2);
-
-    @EnumValue private final Short val;
-
-    Type(Short val) {
-      this.val = val;
-    }
-  }
 }

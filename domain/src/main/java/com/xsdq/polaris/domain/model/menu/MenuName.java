@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 
 public record MenuName(String name) {
 
-  @Untested private static final Pattern NAME_REGEX = Pattern.compile("^[a-zA-Z]+$");
+  @Untested
+  private static final Pattern NAME_REGEX = Pattern.compile("^[a-zA-Z]+$");
 
   public MenuName {
     if (name == null || name.isBlank()) throw new IllegalArgumentException("菜单名称不能为空");
@@ -25,5 +26,9 @@ public record MenuName(String name) {
   @Override
   public int hashCode() {
     return Objects.hashCode(name);
+  }
+
+  public static MenuName of(String name) {
+      return new MenuName(name);
   }
 }

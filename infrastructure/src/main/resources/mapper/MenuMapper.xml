@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xsdq.polaris.account.impl.dao.MenuDao">
+<mapper namespace="com.xsdq.polaris.infrastructure.mapper.MenuMapper">
 
-    <resultMap id="MenuMapping" type="com.xsdq.polaris.account.impl.domain.po.MenuPO">
+    <resultMap id="MenuPOMapping" type="com.xsdq.polaris.infrastructure.persistence.MenuPO">
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="parent_id" property="parentId" jdbcType="BIGINT" />
         <result column="name" property="name" jdbcType="VARBINARY" />
@@ -14,9 +14,9 @@
         <result column="component" property="component" jdbcType="VARCHAR" />
         <result column="redirect" property="redirect" jdbcType="VARCHAR" />
         <result column="type" property="type" jdbcType="TINYINT" />
-        <result column="order" property="order" jdbcType="INTEGER" />
+        <result column="sort" property="sort" jdbcType="INTEGER" />
         <result column="status" property="status" jdbcType="TINYINT" />
-        <result column="permission" property="permission" jdbcType="VARCHAR" />
+        <result column="permission_id" property="permissionId" jdbcType="BIGINT" />
         <result column="icon_path" property="iconPath" jdbcType="VARCHAR" />
         <result column="title" property="title" jdbcType="VARCHAR" />
         <result column="cacheable" property="cacheable" jdbcType="TINYINT" />
@@ -29,14 +29,14 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
-    <sql id="QueryFullColumn">
+    <sql id="MenuPOFullColumns">
         m.id, m.parent_id, m.name, m.url, m.method, m.path, m.component, m.redirect, m.type, m.order, m.status,
         m.permission, m.icon_path, m.title, m.cacheable, m.hidden, m.hidden_header, m.hidden_children, m.target, m.remark,
         m.create_time, m.update_time
     </sql>
 
-	<select id="findMenusByRoleId" resultMap="MenuMapping">
-        select <include refid="QueryFullColumn" />
+	<select id="findMenusByRoleId" resultMap="MenuPOMapping">
+        select <include refid="MenuPOFullColumns" />
         from menus m
         inner join role_menu_relations rm on m.id = rm.menu_id
         where rm.role_id in
